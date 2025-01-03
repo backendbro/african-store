@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 const database_1 = require("./db.ts/database");
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const Auth_1 = __importDefault(require("./routes/Auth"));
@@ -13,6 +14,7 @@ const main = async () => {
     const app = (0, express_1.default)();
     app.use(express_1.default.json());
     app.use((0, cookie_parser_1.default)());
+    app.use((0, cors_1.default)());
     (0, database_1.connectDb)();
     app.use("/api/v1/auth", Auth_1.default);
     const port = process.env.port;
