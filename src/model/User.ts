@@ -14,8 +14,8 @@ interface UserDocument extends Document {
     isModified: (path: string) => boolean;
   }
 
-// Define the schema
-const UserSchema  = new Schema (
+
+  const UserSchema  = new Schema (
   {
     username: {
       type: String,
@@ -36,7 +36,7 @@ const UserSchema  = new Schema (
     password: {
       type: String,
       required: true,
-      //select: false, 
+      select: false, 
       minlength: 6,
     },
     profilePicture: {
