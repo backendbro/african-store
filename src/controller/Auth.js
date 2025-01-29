@@ -35,7 +35,7 @@ exports.Login = async (req, res, next) => {
 };
 
 exports.loggedInUser = async (req, res, next) => {
-  return req.user;
+  res.status(200).json({ success: true, user: req.user });
 };
 
 const responseToken = (user, statusCode, res) => {
