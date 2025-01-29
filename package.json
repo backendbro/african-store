@@ -2,7 +2,7 @@
   "name": "african_store",
   "version": "1.0.0",
   "description": "",
-  "main": "SRC/server.js",
+  "main": "src/server.js",
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js"
