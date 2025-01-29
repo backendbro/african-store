@@ -1,18 +1,6 @@
 const {model, Schema} = require('mongoose');
-import { NextFunction } from "express";
-import bcrypt from "bcryptjs"
-import jwt from "jsonwebtoken"
-
-interface UserDocument extends Document {
-    username: string;
-    email: string;
-    password: string;
-    profilePicture:string 
-    createdAt:Date
-    role:string 
-    isActive:boolean
-    isModified: (path: string) => boolean;
-  }
+const bcrypt = require("bcryptjs")
+const jwt = require("jsonwebtoken")
 
 
   const UserSchema  = new Schema (
@@ -49,7 +37,7 @@ interface UserDocument extends Document {
     },
     role: {
       type: String,
-      enum: ['user', 'admin', 'worker'], 
+      enum: ['user', 'admin', 'owner'], 
       default: 'user',
     },
     isActive: {
@@ -64,7 +52,7 @@ interface UserDocument extends Document {
 
 
 //hash password before stoing in databse
-UserSchema.pre('save', async function(this:UserDocument, next: NextFunction) {
+UserSchema.pre('save', async function(next) {
     if(!this.isModified('password')){
         next()
     }
@@ -82,9 +70,9 @@ UserSchema.methods.getSignedInJwtToken = function(){
 }
 
 //check if passwords match
-UserSchema.methods.matchPassword = async function (enteredPassword: string){
+UserSchema.methods.matchPassword = async function (enteredPassword){
     return await bcrypt.compare(enteredPassword, this.password)
 }
 
-export const User = model('User', UserSchema);
+exports.User = model('User', UserSchema);
 

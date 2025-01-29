@@ -1,13 +1,15 @@
-import dotenv from "dotenv"
+const dotenv = require("dotenv") 
 dotenv.config() 
 
-import express from "express"
-import cors from "cors"
-import { connectDb } from "./db.ts/database"
-import cookieParser from "cookie-parser"
+const express = require("express")
+const cors = require("cors")
+const cookieParser  = require("cookie-parser")
 
+const connectDb  = require("./db/database")
 
-import Auth from "./routes/Auth"
+const Auth = require("./routes/Auth")
+const Category = require("./routes/Category")
+
 
 const main = async () => {
     const app = express() 
@@ -17,8 +19,8 @@ const main = async () => {
 
     connectDb()
 
-
     app.use("/api/v1/auth", Auth)
+    app.use("/api/v1/category", Category)
 
     const port = process.env.port 
     const server = app.listen(port, () => {

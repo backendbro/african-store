@@ -1,12 +1,12 @@
-import { Router } from "express";
+const { Router } = require("express")
 const router = Router()
 
-import { 
+const { 
     Register, 
     Login
-} from "../controller/Auth";
+} = require("../controller/Auth");
 
 router.post("/register", Register)
 router.post("/login", Login)
 
-export default router 
+module.exports = router 
