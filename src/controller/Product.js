@@ -109,7 +109,7 @@ const createProductWithImages = async (
       Discount: formData.Discount,
       DiscountType: formData.DiscountType,
       PackagingType: formData.PackagingType,
-      imageUrls: imageUrls,
+      file: imageUrls,
       user: userId,
       category: categoryId,
     };
@@ -135,21 +135,23 @@ exports.createProduces = async (req, res) => {
 // //@@route   GET /api/v1/materials
 // //@@route  GET /api/v1/:shelfId/material
 // //@@access PUBLIC
-// exports.getFoods = async (req, res, next) => {
-//   if (req.body.categoryId) {
-//     const food = await Food.find({ category: req.body.categoryId }).populate({
-//       path: "category",
-//       select: "name description email",
-//     });
-//     res.status(200).json({ success: true, data: food });
-//   } else {
-//     const food = await Food.find().populate({
-//       path: "category",
-//       select: "name description email",
-//     });
-//     res.status(200).json({ success: true, data: food });
-//   }
-// };
+exports.getProducts = async (req, res, next) => {
+  if (req.body.categoryId) {
+    const product = await Product.find({
+      category: req.body.categoryId,
+    }).populate({
+      path: "category",
+      select: "name description",
+    });
+    res.status(200).json({ success: true, data: product });
+  } else {
+    const product = await Product.find().populate({
+      path: "category",
+      select: "name description",
+    });
+    res.status(200).json({ success: true, data: product });
+  }
+};
 
 // //@desc     Get Single materials
 // //@@route   GET /api/v1/materials/:id
