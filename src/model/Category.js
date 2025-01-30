@@ -22,6 +22,10 @@ const CategorySchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    updatedAt: {
+      type: Date,
+      default: Date.now,
+    },
     user: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -31,6 +35,9 @@ const CategorySchema = new mongoose.Schema(
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
+  },
+  {
+    timestamps: true,
   }
 );
 

@@ -20,9 +20,10 @@ exports.protect = async (req, res, next) => {
 
   //verify token
   try {
+    console.log(token);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await User.findById(decoded.id);
-
+    const user = await User.findById(decoded.id);
+    req.user = user;
     next();
   } catch (err) {
     return `You must be logged to complete this action`;
