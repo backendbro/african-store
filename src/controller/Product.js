@@ -26,7 +26,9 @@ cloudinary.config({
 
 exports.createProducts = async (req, res) => {
   try {
+    console.log(req.body);
     const formData = req.body;
+
     const imageUrls = []; // This will hold the URLs of uploaded images
 
     const categoryId = req.params.categoryId;

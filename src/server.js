@@ -13,17 +13,18 @@ const Product = require("./routes/Product");
 
 const main = async () => {
   const app = express();
-  app.use(express.json());
-  app.use(cookieParser());
-  //app.use(cors())
-
   app.use(
     cors({
       origin: "http://127.0.0.1:5501",
       methods: "GET,POST,PUT,DELETE",
-      allowedHeaders: "Content-Type,Authorization",
+      allowedHeaders: ["Content-Type", "Authorization"],
+      credentials: true,
     })
   );
+
+  app.options("*", cors());
+  app.use(express.json());
+  app.use(cookieParser());
 
   connectDb();
 
