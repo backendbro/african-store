@@ -28,6 +28,16 @@ const main = async () => {
 
   connectDb();
 
+  app.use((req, res, next) => {
+    if (req.originalUrl.startsWith("/api/v1/product/create")) {
+      // Skip JSON parsing for this route
+      next();
+    } else {
+      // Parse JSON for all other routes
+      express.json()(req, res, next);
+    }
+  });
+
   app.use("/api/v1/auth", Auth);
   app.use("/api/v1/category", Category);
   app.use("/api/v1/product", Product);
