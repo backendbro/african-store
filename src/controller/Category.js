@@ -1,9 +1,12 @@
-const { Category } = require("../model/Category");
+const Category = require("../model/Category");
+const { Product } = require("../model/Product");
 
 exports.getCategories = async (_req, res) => {
-  const category = await Category.find().populate("food");
+  const category = await Category.find()
+    .populate("product")
+    .setOptions({ strictPopulate: false });
   if (!category) {
-    return `No shelf found.`;
+    return `No category found.`;
   }
 
   res
