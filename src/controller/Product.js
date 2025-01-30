@@ -6,15 +6,64 @@
 // const fs = require("fs");
 // const os = require("os");
 // const https = require("https");
-const multer = require("multer");
-const path = require("path");
+
 const Category = require("../model/Category");
 const Product = require("../model/Product");
 
 //@desc     Create materials
 //@@route  POST /api/v1/:materialId/material
 //@@access PUBLIC
+
+const cloudinary = require("cloudinary").v2;
+const { v4: uuidv4 } = require("uuid");
+
+// Cloudinary configuration
+cloudinary.config({
+  cloud_name: process.env.cloudinary_name,
+  api_key: process.env.cloudinary_api_key,
+  api_secret: process.env.cloudinary_api_secret,
+});
+
+// Route for creating products and uploading images
 exports.createProducts = async (req, res) => {
+  try {
+    const formData = req.body;
+
+    // Step 1: Handle the images upload
+    const imageUrls = []; // This will hold the URLs of uploaded images
+
+    // Upload each image to Cloudinary
+    for (const image of formData.images) {
+      const uploadResponse = await cloudinary.uploader.upload(image, {
+        folder: "products/", // Optional: specify folder in Cloudinary
+      });
+      imageUrls.push(uploadResponse.secure_url); // Get the secure URL of the uploaded image
+    }
+
+    // Step 2: Create a product document with the form data and uploaded image URLs
+    const newProduct = new Product({
+      name: formData.name,
+      description: formData.description,
+      BasePrice: formData.BasePrice,
+      StockQuantity: formData.StockQuantity,
+      Discount: formData.Discount,
+      DiscountType: formData.DiscountType,
+      PackagingType: formData.PackagingType,
+      imageUrls: imageUrls, // Store the uploaded image URLs
+    });
+
+    // Step 3: Save the product to your database
+    const savedProduct = await newProduct.save();
+
+    // Send back the saved product response
+    res.status(200).json(savedProduct);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error uploading product" });
+  }
+};
+
+exports.createProduces = async (req, res) => {
   req.body.category = req.params.categoryId;
   req.body.user = req.user.id;
 

@@ -14,20 +14,25 @@ const ProductSchema = new mongoose.Schema(
       required: [true, "Please add a description"],
     },
     file: {
-      type: String,
+      type: [String],
       required: true,
     },
     BasePrice: {
       type: Number,
+      required: true,
     },
     StockQuantity: {
       type: Number,
+      required: true,
     },
     Discount: {
-      type: String,
+      type: Number,
+      default: 0,
     },
-    DiscountType: {
+    DiscountiscountType: {
       type: String,
+      enum: ["No Discount", "Percentage", "Fixed Amount"],
+      default: "No Discount",
     },
     Variants: {
       type: String,
