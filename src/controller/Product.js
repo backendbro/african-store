@@ -29,6 +29,12 @@ exports.createProducts = async (req, res) => {
     console.log(req.body);
     const formData = req.body;
 
+    if (!req.files) {
+      return `No file found`;
+    }
+
+    console.log(formData);
+
     const imageUrls = []; // This will hold the URLs of uploaded images
 
     const categoryId = req.params.categoryId;
