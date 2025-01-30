@@ -20,7 +20,7 @@ exports.createProducts = async (req, res) => {
 
   const category = await Category.findById(req.params.categoryId);
   if (!category) {
-    `No shelf found with the ID: ${req.params.categoryId}`;
+    `No category found with the ID: ${req.params.categoryId}`;
   }
 
   //check if user is allowed to complete this action
@@ -29,7 +29,7 @@ exports.createProducts = async (req, res) => {
   }
 
   const product = await Product.create(req.body);
-  res.status(200).json({ success: true, data: "product" });
+  res.status(200).json({ success: true, data: product });
 };
 
 // //@desc     Get materials
