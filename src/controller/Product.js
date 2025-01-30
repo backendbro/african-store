@@ -13,9 +13,9 @@ const Product = require("../model/Product");
 //@desc     Create materials
 //@@route  POST /api/v1/:materialId/material
 //@@access PUBLIC
-
+// Route for creating products and uploading imagesc
 const cloudinary = require("cloudinary").v2;
-const { v4: uuidv4 } = require("uuid");
+const { Readable } = require("stream");
 
 // Cloudinary configuration
 cloudinary.config({
@@ -24,24 +24,76 @@ cloudinary.config({
   api_secret: process.env.cloudinary_api_secret,
 });
 
-// Route for creating products and uploading images
 exports.createProducts = async (req, res) => {
   try {
     const formData = req.body;
-
-    // Step 1: Handle the images upload
     const imageUrls = []; // This will hold the URLs of uploaded images
 
+    const categoryId = req.params.categoryId;
+    const userId = req.user.id;
+    const role = req.user.role;
+
     // Upload each image to Cloudinary
-    for (const image of formData.images) {
-      const uploadResponse = await cloudinary.uploader.upload(image, {
-        folder: "products/", // Optional: specify folder in Cloudinary
-      });
-      imageUrls.push(uploadResponse.secure_url); // Get the secure URL of the uploaded image
+    for (const image of req.files) {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "products/" }, // Optional: specify folder in Cloudinary
+        (error, result) => {
+          if (error) {
+            console.error(error);
+            return res
+              .status(500)
+              .json({ error: "Error uploading image to Cloudinary" });
+          }
+          imageUrls.push(result.secure_url); // Store the uploaded image URL
+
+          // If all images are uploaded, create the product
+          if (imageUrls.length === req.files.length) {
+            createProductWithImages(
+              formData,
+              imageUrls,
+              res,
+              categoryId,
+              userId,
+              role
+            );
+          }
+        }
+      );
+
+      // Convert the buffer to a readable stream and pipe it to Cloudinary
+      const bufferStream = new Readable();
+      bufferStream.push(image.buffer);
+      bufferStream.push(null); // Signal the end of the stream
+      bufferStream.pipe(stream);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error uploading product" });
+  }
+};
+
+const createProductWithImages = async (
+  formData,
+  imageUrls,
+  res,
+  categoryId,
+  userId,
+  role
+) => {
+  try {
+    const category = await Category.findById(categoryId);
+    if (!category) {
+      `No category found with the ID: ${categoryId}`;
+    }
+
+    //check if user is allowed to complete this action
+    if (role !== "admin") {
+      return `User with USER ID: ${userId} is not allowed to complete this action`;
     }
 
     // Step 2: Create a product document with the form data and uploaded image URLs
-    const newProduct = new Product({
+
+    const newProduct = {
       name: formData.name,
       description: formData.description,
       BasePrice: formData.BasePrice,
@@ -49,34 +101,24 @@ exports.createProducts = async (req, res) => {
       Discount: formData.Discount,
       DiscountType: formData.DiscountType,
       PackagingType: formData.PackagingType,
-      imageUrls: imageUrls, // Store the uploaded image URLs
-    });
+      imageUrls: imageUrls,
+      user: userId,
+      category: categoryId,
+    };
 
     // Step 3: Save the product to your database
-    const savedProduct = await newProduct.save();
+    console.log(newProduct);
 
+    const product = await Product.create(newProduct);
     // Send back the saved product response
-    res.status(200).json(savedProduct);
+    res.status(200).json({ data: product });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Error uploading product" });
+    res.status(500).json({ error: "Error creating product" });
   }
 };
 
 exports.createProduces = async (req, res) => {
-  req.body.category = req.params.categoryId;
-  req.body.user = req.user.id;
-
-  const category = await Category.findById(req.params.categoryId);
-  if (!category) {
-    `No category found with the ID: ${req.params.categoryId}`;
-  }
-
-  //check if user is allowed to complete this action
-  if (req.user.role !== "admin") {
-    return `User with USER ID: ${req.user.id} is not allowed to complete this action`;
-  }
-
   const product = await Product.create(req.body);
   res.status(200).json({ success: true, data: product });
 };
