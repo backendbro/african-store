@@ -126,11 +126,6 @@ const createProductWithImages = async (
   }
 };
 
-exports.createProduces = async (req, res) => {
-  const product = await Product.create(req.body);
-  res.status(200).json({ success: true, data: product });
-};
-
 // //@desc     Get materials
 // //@@route   GET /api/v1/materials
 // //@@route  GET /api/v1/:shelfId/material
@@ -185,30 +180,126 @@ exports.getProduct = async (req, res, next) => {
 // //@desc    Update course
 // //@@route   PUT /api/v1/material/:id
 // //@@access PRIVATE
-// exports.updateMaterial = asyncHandler(async (req, res, next) => {
-//   let material = await Material.findById(req.params.id);
-//   if (!material) {
-//     return next(
-//       new ErrorResponse(`No material found with this ID: ${req.params.id}`)
-//     );
-//   }
-//   //MAKE SURE USER IS COURSE OWNER
-//   if (material.user.toString() !== req.user.id && req.user.role !== "admin") {
-//     return next(
-//       new ErrorResponse(
-//         `User: ${req.user.id} not authorized to complete this action`,
-//         404
-//       )
-//     );
-//   }
+exports.updateProduct = async (req, res) => {
+  let product = await Product.findById(req.params.id);
+  if (!product) {
+    return res
+      .status(500)
+      .json({ error: `No material found with this ID: ${req.params.id}` });
+  }
 
-//   material = await Material.findOneAndUpdate(req.params.id, req.body, {
-//     new: true,
-//     runValidators: true,
-//   });
+  if (req.user.role !== "admin") {
+    return res
+      .status(500)
+      .json({ error: `No material found with this ID: ${req.params.id}` });
+  }
 
-//   res.status(200).json({ success: true, data: material });
-// });
+  if (!req.files) {
+    return res.status(400).json({ error: `No files uploaded yet` });
+  }
+
+  const imageUrls = [];
+
+  const productId = req.params.productId;
+  const userId = req.user.id;
+  const role = req.user.role;
+
+  try {
+    const formData = req.body;
+
+    for (const image of req.files) {
+      console.log(image);
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "products/" },
+        (error, result) => {
+          if (error) {
+            console.error(error);
+            return res
+              .status(500)
+              .json({ error: "Error uploading image to Cloudinary" });
+          }
+
+          imageUrls.push(result.secure_url);
+
+          // If all images are uploaded, create the product
+          if (imageUrls.length === req.files.length) {
+            updateProductWithImages(
+              formData,
+              imageUrls,
+              res,
+              productId,
+              userId,
+              role
+            );
+          }
+        }
+      );
+
+      // Convert the buffer to a readable stream and pipe it to Cloudinary
+      const bufferStream = new Readable();
+      bufferStream.push(image.buffer);
+      bufferStream.push(null); // Signal the end of the stream
+      bufferStream.pipe(stream);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error uploading product" });
+  }
+};
+
+const updateProductWithImages = async (
+  formData,
+  imageUrls,
+  res,
+  productId,
+  userId,
+  role
+) => {
+  try {
+    const productExist = await Product.findById(productId);
+    if (!productExist) {
+      `No product found with the ID: ${productId}`;
+    }
+
+    //check if user is allowed to complete this action
+    if (role !== "admin") {
+      return `User with USER ID: ${userId} is not allowed to complete this action`;
+    }
+
+    // Step 2: Create a product document with the form data and uploaded image URLs
+
+    const newProduct = Object.fromEntries(
+      Object.entries({
+        name: formData.name,
+        description: formData.description,
+        BasePrice: formData.BasePrice
+          ? parseInt(formData.BasePrice)
+          : undefined,
+        StockQuantity: formData.StockQuantity
+          ? parseInt(formData.StockQuantity)
+          : undefined,
+        Discount: formData.Discount ? parseInt(formData.Discount) : undefined,
+        DiscountType: formData.DiscountType,
+        PackagingType: formData.PackagingType,
+        file: imageUrls,
+        user: userId,
+        category: formData.categoryId,
+      }).filter(
+        ([_, value]) => value !== undefined && value !== null && value !== ""
+      )
+    );
+
+    // Step 3: Save the product to your database
+    console.log(newProduct);
+
+    const product = await Product.create(newProduct);
+    // Send back the saved product response
+    res.status(200).json({ data: product });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error creating product" });
+  }
+};
 
 // //@desc    DELETE course
 // //@@route   DELETE /api/v1/material/:id
