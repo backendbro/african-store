@@ -153,6 +153,21 @@ exports.getProducts = async (req, res, next) => {
   }
 };
 
+exports.deleteProduct = async (req, res, next) => {
+  let product = await Product.findById(req.params.id);
+  if (!product) {
+    return `No product found with this ID: ${req.params.id}`;
+  }
+
+  //MAKE SURE USER IS COURSE OWNER
+  if (req.user.role !== "admin") {
+    return `User: ${req.user.id} not authorized to complete this action`;
+  }
+
+  await product.deleteOne({ id: req.params.id });
+  res.status(200).json({ success: true, data: {} });
+};
+
 // //@desc     Get Single materials
 // //@@route   GET /api/v1/materials/:id
 // //@@access PUBLIC

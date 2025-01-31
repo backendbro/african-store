@@ -1,6 +1,10 @@
 const express = require("express");
 const { protect, authorize } = require("../middleware/Auth");
-const { createProducts, getProducts } = require("../controller/Product");
+const {
+  createProducts,
+  getProducts,
+  deleteProduct,
+} = require("../controller/Product");
 const router = express.Router();
 
 const multer = require("multer");
@@ -17,5 +21,6 @@ router.post(
   createProducts
 );
 router.get("/", protect, authorize("admin", "owner"), getProducts);
+router.delete("/:id", protect, authorize("admin", "owner"), deleteProduct);
 
 module.exports = router;
