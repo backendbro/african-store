@@ -104,9 +104,9 @@ const createProductWithImages = async (
     const newProduct = {
       name: formData.name,
       description: formData.description,
-      BasePrice: formData.BasePrice,
-      StockQuantity: formData.StockQuantity,
-      Discount: formData.Discount,
+      BasePrice: parseInt(formData.BasePrice),
+      StockQuantity: parseInt(formData.StockQuantity),
+      Discount: parseInt(formData.Discount),
       DiscountType: formData.DiscountType,
       PackagingType: formData.PackagingType,
       file: imageUrls,
