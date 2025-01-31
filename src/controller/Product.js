@@ -171,18 +171,16 @@ exports.deleteProduct = async (req, res, next) => {
 // //@desc     Get Single materials
 // //@@route   GET /api/v1/materials/:id
 // //@@access PUBLIC
-// exports.getMaterial = asyncHandler(async (req, res, next) => {
-//   const material = await Material.findById(req.params.id).populate({
-//     path: "shelf",
-//     select: "name description email",
-//   });
-//   if (!material) {
-//     return next(
-//       new ErrorResponse(`No material found with this ID: ${req.params.id}`)
-//     );
-//   }
-//   res.status(200).json({ success: true, data: material });
-// });
+exports.getProduct = async (req, res, next) => {
+  const product = await Product.findById(req.params.id).populate({
+    path: "category",
+    select: "name description",
+  });
+  if (!product) {
+    return `No product found with this ID: ${req.params.id}`;
+  }
+  res.status(200).json({ success: true, data: product });
+};
 
 // //@desc    Update course
 // //@@route   PUT /api/v1/material/:id

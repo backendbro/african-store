@@ -3,6 +3,7 @@ const { protect, authorize } = require("../middleware/Auth");
 const {
   createProducts,
   getProducts,
+  getProduct,
   deleteProduct,
 } = require("../controller/Product");
 const router = express.Router();
@@ -21,6 +22,7 @@ router.post(
   createProducts
 );
 router.get("/", protect, authorize("admin", "owner"), getProducts);
+router.get("/:id", protect, authorize("admin", "owner"), getProduct);
 router.delete("/:id", protect, authorize("admin", "owner"), deleteProduct);
 
 module.exports = router;
