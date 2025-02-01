@@ -180,124 +180,201 @@ exports.getProduct = async (req, res, next) => {
 // //@desc    Update course
 // //@@route   PUT /api/v1/material/:id
 // //@@access PRIVATE
+// exports.updateProduct = async (req, res) => {
+//   let product = await Product.findById(req.params.id);
+//   if (!product) {
+//     return res
+//       .status(500)
+//       .json({ error: `No material found with this ID: ${req.params.id}` });
+//   }
+
+//   if (req.user.role !== "admin") {
+//     return res
+//       .status(500)
+//       .json({ error: `No material found with this ID: ${req.params.id}` });
+//   }
+
+//   if (!req.files) {
+//     return res.status(400).json({ error: `No files uploaded yet` });
+//   }
+
+//   const imageUrls = [];
+
+//   const productId = req.params.productId;
+//   const userId = req.user.id;
+//   const role = req.user.role;
+
+//   try {
+//     const formData = req.body;
+
+//     for (const image of req.files) {
+
+//       const stream = cloudinary.uploader.upload_stream(
+//         { folder: "products/" },
+//         (error, result) => {
+//           if (error) {
+//             console.error(error);
+//             return res
+//               .status(500)
+//               .json({ error: "Error uploading image to Cloudinary" });
+//           }
+
+//           imageUrls.push(result.secure_url);
+
+//           // If all images are uploaded, create the product
+//           if (imageUrls.length === req.files.length) {
+//             updateProductWithImages(
+//               formData,
+//               imageUrls,
+//               res,
+//               productId,
+//               userId,
+//               role
+//             );
+//           }
+//         }
+//       );
+
+//       // Convert the buffer to a readable stream and pipe it to Cloudinary
+//       const bufferStream = new Readable();
+//       bufferStream.push(image.buffer);
+//       bufferStream.push(null); // Signal the end of the stream
+//       bufferStream.pipe(stream);
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: "Error uploading product" });
+//   }
+// };
+
+// const updateProductWithImages = async (
+//   formData,
+//   imageUrls,
+//   res,
+//   productId,
+//   userId,
+//   role
+// ) => {
+//   try {
+//     const productExist = await Product.findById(productId);
+//     if (!productExist) {
+//       `No product found with the ID: ${productId}`;
+//     }
+
+//     //check if user is allowed to complete this action
+//     if (role !== "admin") {
+//       return `User with USER ID: ${userId} is not allowed to complete this action`;
+//     }
+
+//     // Step 2: Create a product document with the form data and uploaded image URLs
+
+//     const newProduct = Object.fromEntries(
+//       Object.entries({
+//         name: formData.name,
+//         description: formData.description,
+//         BasePrice: formData.BasePrice
+//           ? parseInt(formData.BasePrice)
+//           : undefined,
+//         StockQuantity: formData.StockQuantity
+//           ? parseInt(formData.StockQuantity)
+//           : undefined,
+//         Discount: formData.Discount ? parseInt(formData.Discount) : undefined,
+//         DiscountType: formData.DiscountType,
+//         PackagingType: formData.PackagingType,
+//         file: imageUrls,
+//         user: userId,
+//         category: formData.categoryId,
+//       }).filter(
+//         ([_, value]) => value !== undefined && value !== null && value !== ""
+//       )
+//     );
+
+//     // Step 3: Save the product to your database
+//     console.log(newProduct);
+
+//     const product = await Product.create(newProduct);
+//     // Send back the saved product response
+//     res.status(200).json({ data: product });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: "Error creating product" });
+//   }
+// };
+
 exports.updateProduct = async (req, res) => {
-  let product = await Product.findById(req.params.id);
-  if (!product) {
-    return res
-      .status(500)
-      .json({ error: `No material found with this ID: ${req.params.id}` });
-  }
-
-  if (req.user.role !== "admin") {
-    return res
-      .status(500)
-      .json({ error: `No material found with this ID: ${req.params.id}` });
-  }
-
-  if (!req.files) {
-    return res.status(400).json({ error: `No files uploaded yet` });
-  }
-
-  const imageUrls = [];
-
-  const productId = req.params.productId;
-  const userId = req.user.id;
-  const role = req.user.role;
-
   try {
+    // Validate product existence
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res
+        .status(404)
+        .json({ error: `No product found with ID: ${req.params.id}` });
+    }
+
+    // Authorization check
+    if (req.user.role !== "admin") {
+      return res
+        .status(403)
+        .json({ error: "You are not authorized to update products" });
+    }
+
+    const productId = req.params.id;
+    const userId = req.user.id;
     const formData = req.body;
+    const imageUrls = [];
 
-    for (const image of req.files) {
-      console.log(image);
-      const stream = cloudinary.uploader.upload_stream(
-        { folder: "products/" },
-        (error, result) => {
-          if (error) {
-            console.error(error);
-            return res
-              .status(500)
-              .json({ error: "Error uploading image to Cloudinary" });
-          }
+    // Process new images if present
+    if (req.files && req.files.length > 0) {
+      for (const image of req.files) {
+        await new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: "products/" },
+            (error, result) => {
+              if (error) {
+                reject(new Error("Error uploading image to Cloudinary"));
+                return;
+              }
+              imageUrls.push(result.secure_url);
+              resolve();
+            }
+          );
 
-          imageUrls.push(result.secure_url);
-
-          // If all images are uploaded, create the product
-          if (imageUrls.length === req.files.length) {
-            updateProductWithImages(
-              formData,
-              imageUrls,
-              res,
-              productId,
-              userId,
-              role
-            );
-          }
-        }
-      );
-
-      // Convert the buffer to a readable stream and pipe it to Cloudinary
-      const bufferStream = new Readable();
-      bufferStream.push(image.buffer);
-      bufferStream.push(null); // Signal the end of the stream
-      bufferStream.pipe(stream);
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Error uploading product" });
-  }
-};
-
-const updateProductWithImages = async (
-  formData,
-  imageUrls,
-  res,
-  productId,
-  userId,
-  role
-) => {
-  try {
-    const productExist = await Product.findById(productId);
-    if (!productExist) {
-      `No product found with the ID: ${productId}`;
+          const bufferStream = new Readable();
+          bufferStream.push(image.buffer);
+          bufferStream.push(null);
+          bufferStream.pipe(stream);
+        });
+      }
     }
 
-    //check if user is allowed to complete this action
-    if (role !== "admin") {
-      return `User with USER ID: ${userId} is not allowed to complete this action`;
-    }
-
-    // Step 2: Create a product document with the form data and uploaded image URLs
-
-    const newProduct = Object.fromEntries(
-      Object.entries({
-        name: formData.name,
-        description: formData.description,
-        BasePrice: formData.BasePrice
-          ? parseInt(formData.BasePrice)
-          : undefined,
-        StockQuantity: formData.StockQuantity
-          ? parseInt(formData.StockQuantity)
-          : undefined,
-        Discount: formData.Discount ? parseInt(formData.Discount) : undefined,
-        DiscountType: formData.DiscountType,
-        PackagingType: formData.PackagingType,
-        file: imageUrls,
+    // Update product with combined data
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      {
+        ...formData,
+        // Only update images if new ones were added
+        ...(imageUrls.length > 0 && {
+          file: [...product.file, ...imageUrls],
+        }),
+        // Convert numerical fields
+        ...(formData.BasePrice && { BasePrice: parseInt(formData.BasePrice) }),
+        ...(formData.StockQuantity && {
+          StockQuantity: parseInt(formData.StockQuantity),
+        }),
+        ...(formData.Discount && { Discount: parseInt(formData.Discount) }),
         user: userId,
         category: formData.categoryId,
-      }).filter(
-        ([_, value]) => value !== undefined && value !== null && value !== ""
-      )
+      },
+      { new: true, runValidators: true }
     );
 
-    // Step 3: Save the product to your database
-    console.log(newProduct);
-
-    const product = await Product.create(newProduct);
-    // Send back the saved product response
-    res.status(200).json({ data: product });
+    res.status(200).json({ data: updatedProduct });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Error creating product" });
+    const errorMessage = err.message.includes("Cloudinary")
+      ? "Error uploading images"
+      : "Error updating product";
+    res.status(500).json({ error: errorMessage });
   }
 };
 
