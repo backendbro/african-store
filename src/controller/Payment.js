@@ -14,7 +14,7 @@ exports.payment = async (req, res) => {
       })),
       mode: "payment",
       billing_address_collection: "required",
-      shipping_address_collection: { allowed_countries: ["US", "BR", "NG"] },
+      shipping_address_collection: { allowed_countries: ["US", "BR"] },
       success_url: `${process.env.BASE_URL}/success.html`,
       cancel_url: `${process.env.BASE_URL}/cancel.html`,
     });
