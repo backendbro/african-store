@@ -302,6 +302,7 @@ exports.getProduct = async (req, res, next) => {
 // };
 
 exports.updateProduct = async (req, res) => {
+
   try {
     // Validate product existence
     const product = await Product.findById(req.params.id);
