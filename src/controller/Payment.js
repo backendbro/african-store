@@ -3,7 +3,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 exports.payment = async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"], // Only specify 'card' here
+      payment_method_types: ["card", "wallets"], // Only specify 'card' here
       line_items: req.body.items.map((item) => ({
         price_data: {
           currency: "usd",
