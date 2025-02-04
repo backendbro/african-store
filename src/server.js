@@ -16,7 +16,7 @@ const main = async () => {
   const app = express();
   app.use(
     cors({
-      origin: ["http://127.0.0.1:5500", "http://127.0.0.1:5501"], // Explicitly allow your frontend origin
+      origin: "http://127.0.0.1:5500", // Explicitly allow your frontend origin
       methods: "GET,POST,PUT,DELETE",
       allowedHeaders: ["Content-Type", "Authorization"], // Use an array for headers
       credentials: true, // Optional: Allow cookies/authentication headers
