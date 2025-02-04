@@ -3,7 +3,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 exports.payment = async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card", "apple_pay", "google_pay"],
+      payment_method_types: ["card", "google_pay"],
       line_items: req.body.items.map((item) => ({
         price_data: {
           currency: "usd",
@@ -21,6 +21,7 @@ exports.payment = async (req, res) => {
 
     res.json({ id: session.id });
   } catch (err) {
+    console.log(err);
     res.status(500).json({ error: err.message });
   }
 };
