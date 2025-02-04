@@ -1,6 +1,6 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-app.post("/create-checkout-session", async (req, res) => {
+exports.payment = async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"], // Only specify 'card' here
@@ -23,4 +23,4 @@ app.post("/create-checkout-session", async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-});
+};

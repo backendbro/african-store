@@ -10,6 +10,7 @@ const connectDb = require("./db/database");
 const Auth = require("./routes/Auth");
 const Category = require("./routes/Category");
 const Product = require("./routes/Product");
+const Payment = require("./routes/Payment");
 
 const main = async () => {
   const app = express();
@@ -32,6 +33,7 @@ const main = async () => {
   app.use("/api/v1/auth", Auth);
   app.use("/api/v1/category", Category);
   app.use("/api/v1/product", Product);
+  app.use("/api/v1/payment", Payment);
 
   const port = process.env.port;
   const server = app.listen(port, () => {
