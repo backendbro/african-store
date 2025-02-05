@@ -130,21 +130,55 @@ const createProductWithImages = async (
 // //@@route   GET /api/v1/materials
 // //@@route  GET /api/v1/:shelfId/material
 // //@@access PUBLIC
+// exports.getProducts = async (req, res, next) => {
+//   if (req.body.categoryId) {
+//     const product = await Product.find({
+//       category: req.body.categoryId,
+//     }).populate({
+//       path: "category",
+//       select: "name description",
+//     });
+//     res.status(200).json({ success: true, data: product });
+//   } else {
+//     const product = await Product.find().populate({
+//       path: "category",
+//       select: "name description",
+//     });
+//     res.status(200).json({ success: true, data: product });
+//   }
+// };
+
 exports.getProducts = async (req, res, next) => {
-  if (req.body.categoryId) {
-    const product = await Product.find({
-      category: req.body.categoryId,
-    }).populate({
-      path: "category",
-      select: "name description",
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    let filter = {};
+    if (req.body.categoryId) {
+      filter.category = req.body.categoryId;
+    }
+
+    const products = await Product.find(filter)
+      .populate({ path: "category", select: "name description" })
+      .skip(skip)
+      .limit(limit);
+
+    const totalProducts = await Product.countDocuments(filter);
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    res.status(200).json({
+      success: true,
+      data: products,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
     });
-    res.status(200).json({ success: true, data: product });
-  } else {
-    const product = await Product.find().populate({
-      path: "category",
-      select: "name description",
-    });
-    res.status(200).json({ success: true, data: product });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -302,7 +336,6 @@ exports.getProduct = async (req, res, next) => {
 // };
 
 exports.updateProduct = async (req, res) => {
-
   try {
     // Validate product existence
     const product = await Product.findById(req.params.id);
