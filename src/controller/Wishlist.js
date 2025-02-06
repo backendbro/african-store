@@ -3,7 +3,8 @@ const Product = require("../model/Product");
 
 async function addToWishlist(req, res) {
   try {
-    const { userId, productId } = req.body;
+    const { productId } = req.body;
+    const { id: userId } = req.user;
 
     // Check if the product exists
     const product = await Product.findById(productId);
@@ -42,7 +43,8 @@ async function addToWishlist(req, res) {
 // Remove product from wishlist
 async function removeFromWishlist(req, res) {
   try {
-    const { userId, productId } = req.body;
+    const { productId } = req.body;
+    const { id: userId } = req.user;
 
     // Find the user's wishlist
     const wishlist = await Wishlist.findOne({ userId });
@@ -70,7 +72,7 @@ async function removeFromWishlist(req, res) {
 // Get user's wishlist
 async function getWishlist(req, res) {
   try {
-    const { userId } = req.body;
+    const { id: userId } = req.user;
 
     // Find the user's wishlist
     const wishlist = await Wishlist.findOne({ userId }).populate("products");
