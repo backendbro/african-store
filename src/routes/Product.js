@@ -22,7 +22,7 @@ router.post(
   upload,
   createProducts
 );
-router.get("/", protect, authorize("admin", "owner"), getProducts);
+router.get("/", getProducts);
 router.get("/:id", protect, authorize("admin", "owner"), getProduct);
 router.put("/:id", protect, authorize("admin", "owner"), upload, updateProduct);
 router.delete("/:id", protect, authorize("admin", "owner"), deleteProduct);
