@@ -43,6 +43,14 @@ const main = async () => {
   const server = app.listen(port, () => {
     console.log(`server running on localhost:${port}`);
   });
+
+  process.on("unhandledRejection", (err) => {
+    if (err) {
+      console.log(err);
+    }
+
+    server.close(() => process.exit(1));
+  });
 };
 
 main().catch((error) => {
