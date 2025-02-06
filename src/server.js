@@ -11,6 +11,7 @@ const Auth = require("./routes/Auth");
 const Category = require("./routes/Category");
 const Product = require("./routes/Product");
 const Payment = require("./routes/Payment");
+const Wishlist = require("./routes/WishList");
 
 const main = async () => {
   const app = express();
@@ -38,6 +39,7 @@ const main = async () => {
   app.use("/api/v1/category", Category);
   app.use("/api/v1/product", Product);
   app.use("/api/v1/payment", Payment);
+  app.use("/api/v1/wishlist", Wishlist);
 
   const port = process.env.port;
   const server = app.listen(port, () => {
