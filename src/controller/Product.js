@@ -7,6 +7,7 @@
 // const os = require("os");
 // const https = require("https");
 
+const mongoose = require("mongoose");
 const Category = require("../model/Category");
 const Product = require("../model/Product");
 
@@ -24,12 +25,19 @@ cloudinary.config({
   api_secret: process.env.cloudinary_api_secret,
 });
 
+
+
 exports.getCategoryProducts = async (req, res) => {
   try {
     const { productId, limit = 5 } = req.query;
 
     if (!productId) {
       return res.status(400).json({ error: "Product ID is required" });
+    }
+
+    // Validate productId before querying MongoDB
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ error: "Invalid Product ID" });
     }
 
     // Find the product by ID to get its category
@@ -41,7 +49,7 @@ exports.getCategoryProducts = async (req, res) => {
     // Fetch other products from the same category
     const products = await Product.find({
       category: product.category,
-      _id: { $ne: productId },
+      _id: { $ne: product._id }, // Ensure it's a valid ObjectId
     })
       .limit(parseInt(limit))
       .lean();
@@ -52,6 +60,7 @@ exports.getCategoryProducts = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 exports.createProducts = async (req, res) => {
   try {
