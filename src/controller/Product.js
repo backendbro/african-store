@@ -29,6 +29,7 @@ cloudinary.config({
 
 exports.getCategoryProducts = async (req, res) => {
   try {
+    console.log(req.query)
     const { productId, limit = 5 } = req.query;
 
     if (!productId) {
