@@ -41,6 +41,10 @@ const ProductSchema = new mongoose.Schema(
     PackagingType: {
       type: String,
     },
+    color: {
+    type: String, 
+     default:"red"
+    },
     createdAt: {
       type: Date,
       default: Date.now,
