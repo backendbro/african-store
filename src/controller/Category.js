@@ -53,7 +53,7 @@ exports.getCategoriesFrontEnd = async (req, res) => {
 };
 
 exports.getCategory = async (req, res) => {
-  const category = await Category.findById(req.body.id).populate("material");
+  const category = await Category.findById(req.body.id).populate("product");
 
   if (!category) {
     return `Category not found with ID`;
