@@ -13,6 +13,7 @@ const Product = require("./routes/Product");
 const Payment = require("./routes/Payment");
 const Wishlist = require("./routes/WishList");
 const BestSeller = require("./routes/BestSeller");
+const Review = require("./routes/Review");
 
 const main = async () => {
   const app = express();
@@ -42,6 +43,7 @@ const main = async () => {
   app.use("/api/v1/payment", Payment);
   app.use("/api/v1/wishlist", Wishlist);
   app.use("/api/v1/bestseller", BestSeller);
+  app.use("/api/v1/review", Review);
 
   const port = process.env.port;
   const server = app.listen(port, () => {
