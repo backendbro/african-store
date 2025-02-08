@@ -22,7 +22,9 @@ const { protect, authorize } = require("../middleware/Auth");
 
 router.post("/", protect, authorize("owner", "admin"), createCategory);
 
-router.route("/", protect).get(getCategories);
+router
+  .route("/", protect, authorize("owner", "admin", "user"))
+  .get(getCategories);
 
 // router
 //     .route('/:id')
