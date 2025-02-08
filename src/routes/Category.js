@@ -25,7 +25,7 @@ router.post("/", protect, authorize("owner", "admin"), createCategory);
 
 router.route("/", protect, authorize("owner", "admin")).get(getCategories);
 router
-  .route("/category", protect, authorize("owner", "admin"))
+  .route("/frontend", protect, authorize("owner", "admin"))
   .get(getCategoriesFrontEnd);
 
 // router
