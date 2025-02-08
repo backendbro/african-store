@@ -6,6 +6,7 @@ const {
   createCategory,
   updateShelf,
   deleteShelf,
+  getCategoriesFrontEnd,
 } = require("../controller/Category");
 
 const router = express.Router();
@@ -22,9 +23,10 @@ const { protect, authorize } = require("../middleware/Auth");
 
 router.post("/", protect, authorize("owner", "admin"), createCategory);
 
+router.route("/", protect, authorize("owner", "admin")).get(getCategories);
 router
-  .route("/", protect, authorize("owner", "admin", "user"))
-  .get(getCategories);
+  .route("/", protect, authorize("owner", "admin"))
+  .get(getCategoriesFrontEnd);
 
 // router
 //     .route('/:id')

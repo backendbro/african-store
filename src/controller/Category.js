@@ -14,6 +14,37 @@ exports.getCategories = async (_req, res) => {
     .json({ success: true, count: category.length, data: category });
 };
 
+exports.getCategoriesFrontEnd = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const categories = await Category.find()
+      .populate("product")
+      .setOptions({ strictPopulate: false })
+      .skip(skip)
+      .limit(limit);
+
+    const totalCategories = await Category.countDocuments();
+    const totalPages = Math.ceil(totalCategories / limit);
+
+    res.status(200).json({
+      success: true,
+      count: categories.length,
+      data: categories,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 exports.getCategory = async (req, res) => {
   const category = await Category.findById(req.body.id).populate("material");
 
