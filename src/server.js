@@ -21,7 +21,7 @@ const main = async () => {
       //   "http://127.0.0.1:5500",
       //   "https://african-store-client.vercel.app",
       // ], // Explicitly allow your frontend origin
-      origin: "https://african-store-client.vercel.app",
+      origin: "http://127.0.0.1:5500",
       methods: "GET,POST,PUT,DELETE",
       allowedHeaders: ["Content-Type", "Authorization"], // Use an array for headers
       credentials: true, // Optional: Allow cookies/authentication headers
