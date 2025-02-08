@@ -18,6 +18,11 @@ const CategorySchema = new mongoose.Schema(
       required: [true, "Please add a description"],
       maxlength: [500, "Description can not be more than 500 characters"],
     },
+    categoryDisplay: {
+      type: String,
+      default:
+        "https://i.pinimg.com/736x/e8/03/38/e803386f80706038a57472c2ee48a8f7.jpg",
+    },
     createdAt: {
       type: Date,
       default: Date.now,
