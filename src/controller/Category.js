@@ -62,6 +62,48 @@ exports.getCategory = async (req, res) => {
   res.status(200).json({ success: true, data: category });
 };
 
+exports.getCategoryFrontend = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const skip = (page - 1) * limit;
+
+    // Find category and paginate products
+    const category = await Category.findById(id);
+
+    if (!category) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Category not found" });
+    }
+
+    // Paginate products within the category
+    const [products, totalProducts] = await Promise.all([
+      Product.find({ category: id }).skip(skip).limit(limit),
+      Product.countDocuments({ category: id }),
+    ]);
+
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        category,
+        products,
+      },
+      pagination: {
+        currentPage: page,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Invalid category ID" });
+  }
+};
+
 exports.createCategory = async (req, res) => {
   try {
     req.body.user = req.user.id;

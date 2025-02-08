@@ -29,6 +29,9 @@ router
   .get(getCategoriesFrontEnd);
 
 router.route("/:id", protect, authorize("owner", "admin")).get(getCategory);
+router
+  .route("/frontend/:id", protect, authorize("owner", "admin"))
+  .get(getCategoryFrontend);
 
 // .put(protect, authorize('owner', 'admin'), updateShelf)
 // .delete(protect, authorize('owner', 'admin'), deleteShelf)
