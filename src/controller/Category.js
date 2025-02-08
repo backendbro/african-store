@@ -88,6 +88,7 @@ exports.getCategoryFrontend = async (req, res) => {
 
     res.status(200).json({
       success: true,
+      count: products.length,
       data: {
         category,
         products,
