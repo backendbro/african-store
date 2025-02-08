@@ -1,5 +1,5 @@
 const Category = require("../model/Category");
-const { Product } = require("../model/Product");
+const Product = require("../model/Product");
 
 exports.getCategories = async (_req, res) => {
   const category = await Category.find()
@@ -100,7 +100,7 @@ exports.getCategoryFrontend = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Invalid category ID" });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 

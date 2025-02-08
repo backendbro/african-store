@@ -7,6 +7,7 @@ const {
   updateShelf,
   deleteShelf,
   getCategoriesFrontEnd,
+  getCategoryFrontend,
 } = require("../controller/Category");
 
 const router = express.Router();
