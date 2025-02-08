@@ -20,13 +20,19 @@ exports.getCategoriesFrontEnd = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
+    console.log("Page:", page, "Limit:", limit, "Skip:", skip);
+
     const categories = await Category.find()
       .populate("product")
       .setOptions({ strictPopulate: false })
       .skip(skip)
       .limit(limit);
 
+    console.log("Categories found:", categories);
+
     const totalCategories = await Category.countDocuments();
+    console.log("Total categories in DB:", totalCategories);
+
     const totalPages = Math.ceil(totalCategories / limit);
 
     res.status(200).json({
@@ -41,6 +47,7 @@ exports.getCategoriesFrontEnd = async (req, res) => {
       },
     });
   } catch (error) {
+    console.error("Error fetching categories:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
