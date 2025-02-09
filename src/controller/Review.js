@@ -47,17 +47,43 @@ exports.createReview = async (req, res) => {
 };
 
 // Get all reviews for a specific product
+// exports.getReviews = async (req, res) => {
+//   try {
+//     const { productId } = req.params;
+
+//     if (!productId) {
+//       return res.status(400).json({ message: "Product ID is required." });
+//     }
+
+//     const reviews = await Review.find({ productId }).sort({ createdAt: -1 });
+
+//     res.status(200).json(reviews);
+//   } catch (error) {
+//     res.status(500).json({ message: "Server Error", error: error.message });
+//   }
+// };
+
 exports.getReviews = async (req, res) => {
   try {
     const { productId } = req.params;
+    const { cursor, limit = 5 } = req.query; // Get cursor and limit from query params
 
     if (!productId) {
       return res.status(400).json({ message: "Product ID is required." });
     }
 
-    const reviews = await Review.find({ productId }).sort({ createdAt: -1 });
+    let query = { productId };
+    if (cursor) {
+      query._id = { $lt: cursor }; // Fetch reviews with IDs less than the cursor
+    }
 
-    res.status(200).json(reviews);
+    const reviews = await Review.find(query)
+      .sort({ _id: -1 }) // Sort in descending order
+      .limit(parseInt(limit));
+
+    const hasMore = reviews.length === parseInt(limit); // If we fetch `limit` records, there's more
+
+    res.status(200).json({ reviews, hasMore });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
