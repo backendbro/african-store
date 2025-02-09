@@ -20,8 +20,8 @@ exports.payment = async (req, res) => {
       mode: "payment",
       billing_address_collection: "required",
       shipping_address_collection: { allowed_countries: [] },
-      success_url: `${process.env.BASE_URL1}/public/success.html`,
-      cancel_url: `${process.env.BASE_URL1}/public/canceled.html`,
+      success_url: `${process.env.BASE_URL}/public/success.html`,
+      cancel_url: `${process.env.BASE_URL}/public/canceled.html`,
     });
 
     res.json({ id: session.id });
