@@ -6,7 +6,7 @@ const {
   getProduct,
   deleteProduct,
   updateProduct,
-  getCategoryProducts
+  getCategoryProducts,
 } = require("../controller/Product");
 const router = express.Router();
 
@@ -24,8 +24,13 @@ router.post(
   createProducts
 );
 router.get("/", protect, authorize("admin", "owner"), getProducts);
+router.get(
+  "/category",
+  protect,
+  authorize("admin", "owner"),
+  getCategoryProducts
+);
 router.get("/:id", protect, authorize("admin", "owner"), getProduct);
-router.get("/category", protect, authorize("admin", "owner"), getCategoryProducts);
 router.put("/:id", protect, authorize("admin", "owner"), upload, updateProduct);
 router.delete("/:id", protect, authorize("admin", "owner"), deleteProduct);
 

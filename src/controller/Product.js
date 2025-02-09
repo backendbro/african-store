@@ -25,32 +25,36 @@ cloudinary.config({
   api_secret: process.env.cloudinary_api_secret,
 });
 
-
-
 exports.getCategoryProducts = async (req, res) => {
   try {
-    console.log(req.query)
+    console.log(req.query);
     const { productId, limit = 5 } = req.query;
 
+    // Check if productId is provided
     if (!productId) {
       return res.status(400).json({ error: "Product ID is required" });
     }
 
-    // Validate productId before querying MongoDB
+    // Validate ObjectId format
     if (!mongoose.Types.ObjectId.isValid(productId)) {
-      return res.status(400).json({ error: "Invalid Product ID" });
+      return res.status(400).json({ error: "Invalid Product ID format" });
     }
 
-    // Find the product by ID to get its category
+    // Find the product by ID
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ error: "Product not found" });
     }
 
+    // Ensure category is a valid ObjectId if stored as ObjectId
+    const categoryQuery = mongoose.Types.ObjectId.isValid(product.category)
+      ? new mongoose.Types.ObjectId(product.category)
+      : product.category;
+
     // Fetch other products from the same category
     const products = await Product.find({
-      category: product.category,
-      _id: { $ne: product._id }, // Ensure it's a valid ObjectId
+      category: categoryQuery,
+      _id: { $ne: product._id },
     })
       .limit(parseInt(limit))
       .lean();
@@ -61,7 +65,6 @@ exports.getCategoryProducts = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
 
 exports.createProducts = async (req, res) => {
   try {
