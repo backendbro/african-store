@@ -57,7 +57,7 @@ exports.getReviews = async (req, res) => {
 
     const reviews = await Review.find({ productId }).sort({ createdAt: -1 });
 
-    res.status(200).json({ data: reviews, count: reviews.length });
+    res.status(200).json(reviews);
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
