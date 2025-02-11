@@ -68,8 +68,8 @@ exports.payment = async (req, res) => {
         },
       ],
 
-      success_url: `${process.env.BASE_URL2}/public/success.html`,
-      cancel_url: `${process.env.BASE_URL2}/public/canceled.html`,
+      success_url: `${process.env.BASE_URL1}/public/success.html`,
+      cancel_url: `${process.env.BASE_URL1}/public/canceled.html`,
     });
 
     res.json({ id: session.id });
