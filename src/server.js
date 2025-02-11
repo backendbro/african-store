@@ -20,7 +20,7 @@ const main = async () => {
   const allowedOrigins = [
     "http://127.0.0.1:5500",
     "http://127.0.0.1:5501",
-    "https://african-store-client.vercel.app",
+    "https://african-store-client-wsoh.vercel.app/",
   ];
   const app = express();
   app.use(
