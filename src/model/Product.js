@@ -13,9 +13,13 @@ const ProductSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please add a description"],
     },
+    color: {
+      type: String,
+      default: "red",
+    },
     file: {
       type: [String],
-      required: true, 
+      required: true,
     },
     BasePrice: {
       type: Number,
@@ -42,8 +46,8 @@ const ProductSchema = new mongoose.Schema(
       type: String,
     },
     color: {
-    type: String, 
-     default:"red"
+      type: String,
+      default: "red",
     },
     createdAt: {
       type: Date,
