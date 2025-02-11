@@ -17,7 +17,7 @@ const Review = require("./routes/Review");
 const Like = require("./routes/Like");
 
 const main = async () => {
-  const allowedOrigins = ["http://127.0.0.1:5500", "http://localhost:3000"];
+  const allowedOrigins = ["http://127.0.0.1:5500", "http://127.0.0.1:5501"];
   const app = express();
   app.use(
     cors({
