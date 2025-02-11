@@ -42,7 +42,7 @@ exports.payment = async (req, res) => {
       mode: "payment",
       billing_address_collection: "required",
       shipping_address_collection: {
-        allowed_countries: ["US", "CA", "GB"],
+        allowed_countries: [],
       },
 
       shipping_options: [

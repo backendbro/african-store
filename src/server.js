@@ -17,6 +17,7 @@ const Review = require("./routes/Review");
 const Like = require("./routes/Like");
 
 const main = async () => {
+  const allowedOrigins = ["http://127.0.0.1:5500", "http://localhost:3000"];
   const app = express();
   app.use(
     cors({
@@ -24,7 +25,14 @@ const main = async () => {
       //   "http://127.0.0.1:5500",
       //   "https://african-store-client.vercel.app",
       // ], // Explicitly allow your frontend origin
-      origin: "http://127.0.0.1:5500",
+
+      origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      },
       methods: "GET,POST,PUT,DELETE",
       allowedHeaders: ["Content-Type", "Authorization"], // Use an array for headers
       credentials: true, // Optional: Allow cookies/authentication headers
