@@ -8,16 +8,16 @@ const { protect, authorize } = require("../middleware/Auth");
 const router = express.Router();
 
 // Route to add multiple best sellers
-router.post("/", protect, authorize("owner", "admin"), addBestSellers);
+router.post("/", protect, authorize("owner", "admin", "user"), addBestSellers);
 
 // Route to get all best sellers
-router.get("/", protect, authorize("owner", "admin"), getBestSellers);
+router.get("/", protect, authorize("owner", "admin", "user"), getBestSellers);
 
 // Route to remove multiple best sellers
 router.delete(
   "/remove",
   protect,
-  authorize("owner", "admin"),
+  authorize("owner", "admin", "user"),
   removeBestSellers
 );
 
