@@ -6,34 +6,52 @@ async function addToWishlist(req, res) {
     const { productId } = req.body;
     const { id: userId } = req.user;
 
-    // Check if the product exists
+    // Check if product exists
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // Find the user's wishlist
+    // Find user's wishlist
     let wishlist = await Wishlist.findOne({ userId });
-    if (!wishlist) {
-      // Create a new wishlist if it doesn't exist
-      wishlist = new Wishlist({ userId, products: [productId] });
-    } else {
-      // Add product to existing wishlist (if not already present)
 
-      if (!wishlist.products.includes(productId)) {
-        wishlist.products.push(productId);
-      } else {
-        return res
-          .status(200)
-          .json({ message: "Product already exists", wishlist });
-      }
+    if (!wishlist) {
+      // If no wishlist exists, create one and add the product
+      wishlist = new Wishlist({ userId, products: [productId] });
+      await wishlist.save();
+
+      // Mark product as wishlisted for this user
+      product.isWishlisted = true;
+      await product.save();
+
+      return res.status(200).json({ message: "Added to wishlist", wishlist });
     }
 
-    await wishlist.save();
+    // Check if product is already in wishlist
+    const index = wishlist.products.indexOf(productId);
+    if (index !== -1) {
+      // Remove product from wishlist
+      wishlist.products.splice(index, 1);
+      await wishlist.save();
 
-    return res
-      .status(200)
-      .json({ message: "Product added to wishlist", wishlist });
+      // Update product's wishlisted status (only for this user)
+      product.isWishlisted = false;
+      await product.save();
+
+      return res
+        .status(200)
+        .json({ message: "Removed from wishlist", wishlist });
+    } else {
+      // Add product to wishlist
+      wishlist.products.push(productId);
+      await wishlist.save();
+
+      // Mark product as wishlisted
+      product.isWishlisted = true;
+      await product.save();
+
+      return res.status(200).json({ message: "Added to wishlist", wishlist });
+    }
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Server error" });
