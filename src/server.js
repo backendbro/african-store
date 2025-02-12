@@ -54,7 +54,7 @@ const main = async () => {
   app.use("/api/v1/review", Review);
   app.use("/api/v1/like", Like);
 
-  const port = process.env.port || 8000;
+  const port = 8000;
   const server = app.listen(port, () => {
     console.log(`server running on localhost:${port}`);
   });

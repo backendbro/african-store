@@ -1,4 +1,6 @@
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const stripe = require("stripe")(
+  "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"
+);
 
 exports.payment = async (req, res) => {
   try {
@@ -68,8 +70,8 @@ exports.payment = async (req, res) => {
         },
       ],
 
-      success_url: `${process.env.BASE_URL1}/public/success.html`,
-      cancel_url: `${process.env.BASE_URL1}/public/canceled.html`,
+      success_url: `http://127.0.0.1:5500/public/success.html`,
+      cancel_url: `http://127.0.0.1:5500/public/canceled.html`,
     });
 
     res.json({ id: session.id });

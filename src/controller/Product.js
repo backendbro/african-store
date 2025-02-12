@@ -20,10 +20,15 @@ const { Readable } = require("stream");
 
 // Cloudinary configuration
 cloudinary.config({
-  cloud_name: process.env.cloudinary_name,
-  api_key: process.env.cloudinary_api_key,
-  api_secret: process.env.cloudinary_api_secret,
+  cloud_name: "dyw5q4fzd",
+  api_key: "984224379582864",
+  api_secret: "NCiNPkf-HcbVkM13VqZr9lMAaQM",
 });
+// cloudinary.config({
+//   cloud_name: process.env.cloudinary_name,
+//   api_key: process.env.cloudinary_api_key,
+//   api_secret: process.env.cloudinary_api_secret,
+// });
 
 exports.getCategoryProducts = async (req, res) => {
   try {
