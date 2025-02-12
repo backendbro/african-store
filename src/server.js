@@ -45,6 +45,10 @@ const main = async () => {
 
   connectDb();
 
+  app.use("/", (req, res) => {
+    res.status(200).json({ status: "Up and running" });
+  });
+
   app.use("/api/v1/auth", Auth);
   app.use("/api/v1/category", Category);
   app.use("/api/v1/product", Product);
