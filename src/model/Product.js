@@ -32,6 +32,12 @@ const ProductSchema = new mongoose.Schema(
     Discount: {
       type: Number,
       default: 0,
+      set: (val) => {
+        if (typeof val === "string") {
+          return parseFloat(val.replace("%", "")); // Remove '%' and convert to number
+        }
+        return val;
+      },
     },
     DiscountiscountType: {
       type: String,
