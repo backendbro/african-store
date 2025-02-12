@@ -45,10 +45,6 @@ const main = async () => {
 
   connectDb();
 
-  app.use("/", (req, res) => {
-    res.status(200).json({ status: "Up and running" });
-  });
-
   app.use("/api/v1/auth", Auth);
   app.use("/api/v1/category", Category);
   app.use("/api/v1/product", Product);
@@ -57,6 +53,10 @@ const main = async () => {
   app.use("/api/v1/bestseller", BestSeller);
   app.use("/api/v1/review", Review);
   app.use("/api/v1/like", Like);
+
+  app.use("/api/v1/check", (req, res) => {
+    res.status(200).json({ status: "Up and running" });
+  });
 
   const port = 8000;
   const server = app.listen(port, () => {
