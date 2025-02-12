@@ -7,8 +7,8 @@ const {
 } = require("../controller/Wishlist");
 const { protect, authorize } = require("../middleware/Auth");
 
-router.get("/", protect, authorize("owner", "admin", "user"), getWishlist);
 router.post("/", protect, authorize("owner", "admin", "user"), addToWishlist);
+router.get("/", protect, authorize("owner", "admin", "user"), getWishlist);
 router.put(
   "/",
   protect,

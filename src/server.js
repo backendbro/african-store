@@ -25,19 +25,15 @@ const main = async () => {
   const app = express();
   app.use(
     cors({
-      // origin: [
-      //   "http://127.0.0.1:5500",
-      //   "https://african-store-client.vercel.app",
-      // ], // Explicitly allow your frontend origin
+      origin:{
 
-      origin: "http://127.0.0.1:5500", 
-      // function (origin, callback) {
-      //   if (!origin || allowedOrigins.includes(origin)) {
-      //     callback(null, true);
-      //   } else {
-      //     callback(new Error("Not allowed by CORS"));
-      //   }
-      // },
+      function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      },
       methods: "GET,POST,PUT,DELETE",
       allowedHeaders: ["Content-Type", "Authorization"], // Use an array for headers
       credentials: true, // Optional: Allow cookies/authentication headers
@@ -60,7 +56,7 @@ const main = async () => {
   app.use("/api/v1/review", Review);
   app.use("/api/v1/like", Like);
 
-  const port = process.env.port;
+  const port = process.env.port || 8000;
   const server = app.listen(port, () => {
     console.log(`server running on localhost:${port}`);
   });
