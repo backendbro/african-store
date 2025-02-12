@@ -88,23 +88,77 @@ async function removeFromWishlist(req, res) {
 }
 
 // Get user's wishlist
-async function getWishlist(req, res) {
+// async function getWishlist(req, res) {
+//   try {
+//     const { id: userId } = req.user;
+
+//     // Find the user's wishlist
+//     const wishlist = await Wishlist.findOne({ userId }).populate("products");
+
+//     if (!wishlist) {
+//       return res.status(404).json({ message: "Wishlist not found" });
+//     }
+
+//     return res.status(200).json({ wishlist });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ message: "Server error" });
+//   }
+// }
+
+exports.getWishlist = async (req, res) => {
   try {
     const { id: userId } = req.user;
 
-    // Find the user's wishlist
-    const wishlist = await Wishlist.findOne({ userId }).populate("products");
+    // Pagination setup
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
-    if (!wishlist) {
-      return res.status(404).json({ message: "Wishlist not found" });
+    // Find the user's wishlist
+    const wishlist = await Wishlist.findOne({ userId });
+
+    if (!wishlist || wishlist.products.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "Wishlist is empty",
+        data: [],
+        pagination: {
+          currentPage: page,
+          totalPages: 0,
+          hasNextPage: false,
+          hasPrevPage: false,
+        },
+      });
     }
 
-    return res.status(200).json({ wishlist });
+    // Apply pagination to products inside the wishlist
+    const totalWishlistItems = wishlist.products.length;
+    const totalPages = Math.ceil(totalWishlistItems / limit);
+
+    const paginatedProducts = await Product.find({
+      _id: { $in: wishlist.products },
+    })
+      .populate({ path: "category", select: "name description" })
+      .skip(skip)
+      .limit(limit);
+
+    res.status(200).json({
+      success: true,
+      count: paginatedProducts.length,
+      data: paginatedProducts,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Server error" });
+    console.error("Error fetching wishlist:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
-}
+};
 
 module.exports = {
   addToWishlist,
