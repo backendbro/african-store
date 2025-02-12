@@ -30,13 +30,14 @@ const main = async () => {
       //   "https://african-store-client.vercel.app",
       // ], // Explicitly allow your frontend origin
 
-      origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-          callback(null, true);
-        } else {
-          callback(new Error("Not allowed by CORS"));
-        }
-      },
+      origin: "http://127.0.0.1:5500", 
+      // function (origin, callback) {
+      //   if (!origin || allowedOrigins.includes(origin)) {
+      //     callback(null, true);
+      //   } else {
+      //     callback(new Error("Not allowed by CORS"));
+      //   }
+      // },
       methods: "GET,POST,PUT,DELETE",
       allowedHeaders: ["Content-Type", "Authorization"], // Use an array for headers
       credentials: true, // Optional: Allow cookies/authentication headers
