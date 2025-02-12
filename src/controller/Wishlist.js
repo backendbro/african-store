@@ -106,7 +106,7 @@ async function removeFromWishlist(req, res) {
 //   }
 // }
 
-exports.getWishlist = async (req, res) => {
+async function getWishlist(req, res) {
   try {
     const { id: userId } = req.user;
 
@@ -158,7 +158,7 @@ exports.getWishlist = async (req, res) => {
     console.error("Error fetching wishlist:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
-};
+}
 
 module.exports = {
   addToWishlist,
