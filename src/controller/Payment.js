@@ -70,8 +70,8 @@ exports.payment = async (req, res) => {
         },
       ],
 
-      success_url: `http://127.0.0.1:5500/public/success.html`,
-      cancel_url: `http://127.0.0.1:5500/public/canceled.html`,
+      success_url: `https://www.africanmarkets.eu/public/success.html`,
+      cancel_url: `https://www.africanmarkets.eu/public/canceled.html`,
     });
 
     res.json({ id: session.id });
