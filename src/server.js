@@ -54,10 +54,6 @@ const main = async () => {
   app.use("/api/v1/review", Review);
   app.use("/api/v1/like", Like);
 
-  app.use("/", (req, res) =>
-    res.status(200).json({ message: "UP AND RUNNING" })
-  );
-
   const port = 8000;
   const server = app.listen(port, () => {
     console.log(`server running on localhost:${port}`);
