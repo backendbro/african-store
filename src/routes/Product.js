@@ -23,7 +23,7 @@ router.post(
   upload,
   createProducts
 );
-router.get("/", protect, authorize("admin", "owner", "user"), getProducts);
+router.get("/", getProducts);
 router.get("/category", getCategoryProducts);
 router.get("/:id", getProduct);
 router.put(
