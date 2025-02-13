@@ -19,7 +19,7 @@ const upload = multer({ storage: storage }).array("images[]", 10);
 router.post(
   "/create/:categoryId",
   protect,
-  authorize("admin", "owner", "user"),
+  authorize("admin", "owner"),
   upload,
   createProducts
 );

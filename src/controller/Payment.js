@@ -53,7 +53,7 @@ exports.payment = async (req, res) => {
             display_name: req.body.shippingMethod || "Standard Shipping",
             type: "fixed_amount",
             fixed_amount: {
-              amount: req.body.shippingFee * 100,
+              amount: Number(req.body.shippingFee || 0) * 100,
               currency: req.body.currency || "usd",
             },
             delivery_estimate: {
