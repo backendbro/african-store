@@ -25,7 +25,7 @@ router.post(
 );
 router.get("/", protect, authorize("admin", "owner", "user"), getProducts);
 router.get("/category", getCategoryProducts);
-router.get("/:id", protect, authorize("admin", "owner", "user"), getProduct);
+router.get("/:id", getProduct);
 router.put(
   "/:id",
   protect,
