@@ -62,12 +62,21 @@ const main = async () => {
     console.log(`server running on localhost:${port}`);
   });
 
+  const { spawn } = require("child_process");
+
   process.on("unhandledRejection", (err) => {
     if (err) {
-      console.log(err);
+      console.error("Unhandled rejection:", err);
     }
 
-    server.close(() => process.exit(1));
+    console.log("Restarting server...");
+    server.close(() => {
+      spawn(process.argv[0], process.argv.slice(1), {
+        stdio: "inherit",
+        detached: true,
+      }).unref();
+      process.exit(1);
+    });
   });
 };
 
