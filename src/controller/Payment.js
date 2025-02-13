@@ -59,11 +59,11 @@ exports.payment = async (req, res) => {
             delivery_estimate: {
               minimum: {
                 unit: "business_day",
-                value: req.body.deliveryEstimate.minimum.value,
+                value: req.body.deliveryEstimate.minimum.value ?? 1,
               },
               maximum: {
                 unit: "business_day",
-                value: req.body.deliveryEstimate.maximum.value,
+                value: req.body.deliveryEstimate.maximum.value ?? 3,
               },
             },
           },
