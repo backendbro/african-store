@@ -24,7 +24,7 @@ const UserSchema = new Schema(
       type: String,
       required: true,
       select: false,
-      minlength: 6,
+      minlength: 3,
     },
     profilePicture: {
       type: String,
