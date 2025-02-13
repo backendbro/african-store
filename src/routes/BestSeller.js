@@ -11,7 +11,7 @@ const router = express.Router();
 router.post("/", protect, authorize("owner", "admin", "user"), addBestSellers);
 
 // Route to get all best sellers
-router.get("/", protect, authorize("owner", "admin", "user"), getBestSellers);
+router.get("/", getBestSellers);
 
 // Route to remove multiple best sellers
 router.delete(
