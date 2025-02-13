@@ -55,7 +55,6 @@ const ProductSchema = new mongoose.Schema(
       type: String,
       default: "red",
     },
-    isWishlisted: { type: Boolean, default: false },
     createdAt: {
       type: Date,
       default: Date.now,
