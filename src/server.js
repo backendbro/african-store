@@ -15,6 +15,7 @@ const Wishlist = require("./routes/WishList");
 const BestSeller = require("./routes/BestSeller");
 const Review = require("./routes/Review");
 const Like = require("./routes/Like");
+const Search = require("./routes/Search");
 
 const main = async () => {
   const allowedOrigins = [
@@ -54,6 +55,7 @@ const main = async () => {
   app.use("/api/v1/bestseller", BestSeller);
   app.use("/api/v1/review", Review);
   app.use("/api/v1/like", Like);
+  app.use("/api/v1/search");
 
   const port = 8000;
   const server = app.listen(port, () => {
