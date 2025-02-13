@@ -4,11 +4,13 @@ const {
   addToWishlist,
   removeFromWishlist,
   getWishlist,
+  displayProducts,
 } = require("../controller/Wishlist");
 const { protect, authorize } = require("../middleware/Auth");
 
 router.post("/", protect, authorize("owner", "admin", "user"), addToWishlist);
 router.get("/", protect, authorize("owner", "admin", "user"), getWishlist);
+router.get("/user-wish", protect, authorize("user"), displayProducts);
 router.put(
   "/",
   protect,

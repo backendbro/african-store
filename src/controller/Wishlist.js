@@ -60,50 +60,6 @@ const Product = require("../model/Product");
 
 // Remove product from wishlist
 
-async function addToWishlist(req, res) {
-  try {
-    const { productId } = req.body;
-    const { id: userId } = req.user;
-
-    // Check if product exists
-    const product = await Product.findById(productId);
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-
-    // Find or create the user's wishlist
-    let wishlist = await Wishlist.findOne({ userId });
-
-    if (!wishlist) {
-      wishlist = new Wishlist({ userId, products: [{ productId }] });
-      await wishlist.save();
-      return res.status(200).json({ message: "Added to wishlist", wishlist });
-    }
-
-    // Check if the product is already in the wishlist
-    const index = wishlist.products.findIndex(
-      (item) => item.productId.toString() === productId
-    );
-
-    if (index !== -1) {
-      // Remove the product from the wishlist
-      wishlist.products.splice(index, 1);
-      await wishlist.save();
-      return res
-        .status(200)
-        .json({ message: "Removed from wishlist", wishlist });
-    } else {
-      // Add product to wishlist
-      wishlist.products.push({ productId });
-      await wishlist.save();
-      return res.status(200).json({ message: "Added to wishlist", wishlist });
-    }
-  } catch (error) {
-    console.error("Error managing wishlist:", error);
-    return res.status(500).json({ message: "Server error" });
-  }
-}
-
 async function removeFromWishlist(req, res) {
   try {
     const { productId } = req.body;
@@ -150,6 +106,49 @@ async function removeFromWishlist(req, res) {
 //     return res.status(500).json({ message: "Server error" });
 //   }
 // }
+async function addToWishlist(req, res) {
+  try {
+    const { productId } = req.body;
+    const { id: userId } = req.user;
+
+    // Check if product exists
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Find or create the user's wishlist
+    let wishlist = await Wishlist.findOne({ userId });
+
+    if (!wishlist) {
+      wishlist = new Wishlist({ userId, products: [{ productId }] });
+      await wishlist.save();
+      return res.status(200).json({ message: "Added to wishlist", wishlist });
+    }
+
+    // Check if the product is already in the wishlist
+    const index = wishlist.products.findIndex(
+      (item) => item.productId.toString() === productId
+    );
+
+    if (index !== -1) {
+      // Remove the product from the wishlist
+      wishlist.products.splice(index, 1);
+      await wishlist.save();
+      return res
+        .status(200)
+        .json({ message: "Removed from wishlist", wishlist });
+    } else {
+      // Add product to wishlist
+      wishlist.products.push({ productId });
+      await wishlist.save();
+      return res.status(200).json({ message: "Added to wishlist", wishlist });
+    }
+  } catch (error) {
+    console.error("Error managing wishlist:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+}
 
 async function getWishlist(req, res) {
   try {
@@ -203,8 +202,42 @@ async function getWishlist(req, res) {
   }
 }
 
+async function displayProducts(req, res) {
+  const currentUserId = req.user.id;
+  const products = await Product.aggregate([
+    {
+      $lookup: {
+        from: "wishlists", // make sure this is your actual collection name
+        let: { prodId: "$_id" },
+        pipeline: [
+          // Only consider wishlist documents for the current user
+          { $match: { userId: mongoose.Types.ObjectId(currentUserId) } },
+          { $unwind: "$products" },
+          // Match the product within the wishlist's products array
+          { $match: { $expr: { $eq: ["$products.productId", "$$prodId"] } } },
+          { $count: "count" },
+        ],
+        as: "wishlistData",
+      },
+    },
+    {
+      $addFields: {
+        wishlistCount: {
+          $ifNull: [{ $arrayElemAt: ["$wishlistData.count", 0] }, 0],
+        },
+      },
+    },
+    {
+      $project: { wishlistData: 0 },
+    },
+  ]);
+
+  res.status(200).json({ success: true, data: products });
+}
+
 module.exports = {
   addToWishlist,
   removeFromWishlist,
   getWishlist,
+  displayProducts,
 };
