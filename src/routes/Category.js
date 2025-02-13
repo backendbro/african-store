@@ -24,15 +24,11 @@ const { protect, authorize } = require("../middleware/Auth");
 
 router.post("/", protect, authorize("owner", "admin"), createCategory);
 
-router.route("/", protect, authorize("owner", "admin")).get(getCategories);
-router
-  .route("/frontend", protect, authorize("owner", "admin"))
-  .get(getCategoriesFrontEnd);
+router.route("/").get(getCategories);
+router.route("/frontend").get(getCategoriesFrontEnd);
 
-router.route("/:id", protect, authorize("owner", "admin")).get(getCategory);
-router
-  .route("/frontend/:id", protect, authorize("owner", "admin"))
-  .get(getCategoryFrontend);
+router.route("/:id").get(getCategory);
+router.route("/frontend/:id").get(getCategoryFrontend);
 
 // .put(protect, authorize('owner', 'admin'), updateShelf)
 // .delete(protect, authorize('owner', 'admin'), deleteShelf)
