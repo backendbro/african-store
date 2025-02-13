@@ -53,17 +53,23 @@ exports.payment = async (req, res) => {
             display_name: req.body.shippingMethod || "Standard Shipping",
             type: "fixed_amount",
             fixed_amount: {
-              amount: Number(req.body.shippingFee || 0) * 100,
+              amount: Math.max(0, Number(req.body.shippingFee || 0)) * 100, // Ensure valid number
               currency: req.body.currency || "usd",
             },
             delivery_estimate: {
               minimum: {
                 unit: "business_day",
-                value: req.body.deliveryEstimate.minimum.value ?? 1,
+                value: Math.max(
+                  1,
+                  req.body.deliveryEstimate?.minimum?.value ?? 1
+                ), // Ensures at least 1
               },
               maximum: {
                 unit: "business_day",
-                value: req.body.deliveryEstimate.maximum.value ?? 3,
+                value: Math.max(
+                  1,
+                  req.body.deliveryEstimate?.maximum?.value ?? 3
+                ), // Ensures at least 1
               },
             },
           },
