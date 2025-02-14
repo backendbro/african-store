@@ -1,5 +1,6 @@
 const Wishlist = require("../model/Wishlist");
 const Product = require("../model/Product");
+const mongoose = require("mongoose");
 
 // async function addToWishlist(req, res) {
 //   try {
@@ -202,18 +203,55 @@ async function getWishlist(req, res) {
   }
 }
 
+// async function displayProducts(req, res) {
+//   const currentUserId = req.user.id;
+//   console.log(currentUserId);
+//   const products = await Product.aggregate([
+//     {
+//       $lookup: {
+//         from: "Wishlist", // make sure this is your actual collection name
+//         let: { prodId: "$_id" },
+//         pipeline: [
+//           // Only consider wishlist documents for the current user
+//           { $match: { userId: new mongoose.Types.ObjectId(currentUserId) } },
+//           { $unwind: "$products" },
+//           // Match the product within the wishlist's products array
+//           { $match: { $expr: { $eq: ["$products.productId", "$$prodId"] } } },
+//           { $count: "count" },
+//         ],
+//         as: "wishlistData",
+//       },
+//     },
+//     {
+//       $addFields: {
+//         wishlistCount: {
+//           $ifNull: [{ $arrayElemAt: ["$wishlistData.count", 0] }, 0],
+//         },
+//       },
+//     },
+//     {
+//       $project: { wishlistData: 0 },
+//     },
+//   ]);
+
+//   res.status(200).json({ success: true, data: products });
+// }
+
 async function displayProducts(req, res) {
-  const currentUserId = req.user.id;
+  // Use req.user._id instead of req.user.id if your token provides _id
+  const currentUserId = req.user._id;
+  console.log("Current User ID:", currentUserId);
+
   const products = await Product.aggregate([
     {
       $lookup: {
-        from: "wishlists", // make sure this is your actual collection name
+        from: "wishlists", // ensure this matches your collection name in MongoDB
         let: { prodId: "$_id" },
         pipeline: [
-          // Only consider wishlist documents for the current user
-          { $match: { userId: mongoose.Types.ObjectId(currentUserId) } },
+          // Filter wishlists by the current user
+          { $match: { userId: new mongoose.Types.ObjectId(currentUserId) } },
           { $unwind: "$products" },
-          // Match the product within the wishlist's products array
+          // Check if the wishlist's productId matches the product's _id
           { $match: { $expr: { $eq: ["$products.productId", "$$prodId"] } } },
           { $count: "count" },
         ],
@@ -226,6 +264,10 @@ async function displayProducts(req, res) {
           $ifNull: [{ $arrayElemAt: ["$wishlistData.count", 0] }, 0],
         },
       },
+    },
+    // Only include products that are in the current user's wishlist
+    {
+      $match: { wishlistCount: { $gt: 0 } },
     },
     {
       $project: { wishlistData: 0 },
