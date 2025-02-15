@@ -7,6 +7,7 @@ const {
   deleteProduct,
   updateProduct,
   getCategoryProducts,
+  getNormalProducts,
 } = require("../controller/Product");
 const router = express.Router();
 
@@ -23,6 +24,7 @@ router.post(
   upload,
   createProducts
 );
+router.get("/", getNormalProducts);
 router.get("/", getProducts);
 router.get("/category", getCategoryProducts);
 router.get("/:id", getProduct);
