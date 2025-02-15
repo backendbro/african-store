@@ -230,10 +230,10 @@ exports.getProducts = async (req, res, next) => {
   }
 };
 
-exports.getNormalProducts = async (req, res,res) => {
-  const products = await Product.find()
-  return res.status(200).json({data: products})
-}
+exports.getNormalProducts = async (req, res) => {
+  const products = await Product.find();
+  return res.status(200).json({ data: products });
+};
 
 exports.deleteProduct = async (req, res, next) => {
   let product = await Product.findById(req.params.id);

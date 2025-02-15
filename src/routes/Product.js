@@ -24,8 +24,8 @@ router.post(
   upload,
   createProducts
 );
-router.get("/normal", getNormalProducts);
 router.get("/", getProducts);
+router.get("/normal", getNormalProducts);
 router.get("/category", getCategoryProducts);
 router.get("/:id", getProduct);
 router.put(
