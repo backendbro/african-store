@@ -8,6 +8,7 @@ const {
   updateProduct,
   getCategoryProducts,
   getNormalProducts,
+  getNormalPaginationProducts,
 } = require("../controller/Product");
 const router = express.Router();
 
@@ -27,6 +28,7 @@ router.post(
 router.get("/", getProducts);
 router.get("/normal", getNormalProducts);
 router.get("/category", getCategoryProducts);
+router.get("/normalize", getNormalPaginationProducts);
 router.get("/:id", getProduct);
 router.put(
   "/:id",

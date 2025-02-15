@@ -235,6 +235,34 @@ exports.getNormalProducts = async (req, res) => {
   return res.status(200).json({ data: products });
 };
 
+exports.getNormalPaginationProducts = async (req, res) => {
+  try {
+    let { page = 1, limit = 10 } = req.query; // Default values: page 1, limit 10
+    page = parseInt(page);
+    limit = parseInt(limit);
+
+    if (isNaN(page) || isNaN(limit) || page < 1 || limit < 1) {
+      return res.status(400).json({ message: "Invalid pagination parameters" });
+    }
+
+    const totalProducts = await Product.countDocuments();
+    const products = await Product.find()
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    return res.status(200).json({
+      data: products,
+      totalPages: Math.ceil(totalProducts / limit),
+      currentPage: page,
+      totalProducts,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Server error", error: error.message });
+  }
+};
+
 exports.deleteProduct = async (req, res, next) => {
   let product = await Product.findById(req.params.id);
   if (!product) {
