@@ -23,6 +23,7 @@ const main = async () => {
     "http://127.0.0.1:5501",
     "https://african-store-client.vercel.app",
     "https://www.africanmarkets.eu",
+    "https://african-store-admin.vercel.app"
   ];
   const app = express();
   app.use(
