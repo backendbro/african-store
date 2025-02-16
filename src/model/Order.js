@@ -12,12 +12,12 @@ const OrderSchema = new mongoose.Schema(
     amount_paid: { type: Number, required: true },
     payment_method: {
       type: String,
-      enum: ["Cash", "Card", "Transfer"],
+      enum: ["cash", "card", "transfer"],
       required: true,
     },
     order_status: {
       type: String,
-      enum: ["Pending", "Successful", "Failed"],
+      enum: ["pending", "successful", "failed"],
       default: "pending",
     },
     order_items: [OrderItemSchema], // Array of food items
