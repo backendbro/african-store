@@ -1,27 +1,27 @@
 const mongoose = require("mongoose");
 
 const OrderItemSchema = new mongoose.Schema({
-  name: { type: String, required: true },
+  food_name: { type: String, required: true },
   quantity: { type: Number, required: true },
   price: { type: Number, required: true },
 });
 
 const OrderSchema = new mongoose.Schema(
   {
-    customerName: { type: String, required: true },
-    amountPaid: { type: Number, required: true },
-    paymentMethod: {
+    customer_name: { type: String, required: true },
+    amount_paid: { type: Number, required: true },
+    payment_method: {
       type: String,
       enum: ["Cash", "Card", "Transfer"],
       required: true,
     },
-    orderStatus: {
+    order_status: {
       type: String,
       enum: ["Pending", "Successful", "Failed"],
       default: "pending",
     },
-    foodItems: [OrderItemSchema], // Array of food items
-    createdAt: { type: Date, default: Date.now },
+    order_items: [OrderItemSchema], // Array of food items
+    created_at: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );
