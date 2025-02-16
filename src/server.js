@@ -16,6 +16,7 @@ const BestSeller = require("./routes/BestSeller");
 const Review = require("./routes/Review");
 const Like = require("./routes/Like");
 const Search = require("./routes/Search");
+const Order = require("./routes/Order");
 
 const main = async () => {
   const allowedOrigins = [
@@ -23,8 +24,8 @@ const main = async () => {
     "http://127.0.0.1:5501",
     "https://african-store-client.vercel.app",
     "https://www.africanmarkets.eu",
-    "https://african-store-admin.vercel.app", 
-    "https://admin.africanmarkets.eu"
+    "https://african-store-admin.vercel.app",
+    "https://admin.africanmarkets.eu",
   ];
   const app = express();
   app.use(
@@ -58,6 +59,7 @@ const main = async () => {
   app.use("/api/v1/review", Review);
   app.use("/api/v1/like", Like);
   app.use("/api/v1/search", Search);
+  app.use("/api/v1/order", Order);
 
   const port = 8000;
   const server = app.listen(port, () => {
