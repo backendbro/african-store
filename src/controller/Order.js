@@ -1,4 +1,5 @@
 const Order = require("../model/Order");
+const moment = require("moment");
 
 // 🟢 Create a new order
 exports.createOrder = async (req, res) => {
@@ -51,14 +52,55 @@ exports.getOrders = async (req, res) => {
   }
 };
 
+// exports.getOrdersPagination = async (req, res) => {
+//   try {
+//     let { page = 1, limit = 10 } = req.query; // Default: page 1, 10 orders per page
+//     page = parseInt(page);
+//     limit = parseInt(limit);
+
+//     const totalOrders = await Order.countDocuments(); // Get total orders count
+//     const orders = await Order.find()
+//       .sort({ created_at: -1 })
+//       .skip((page - 1) * limit)
+//       .limit(limit);
+
+//     res.status(200).json({
+//       totalOrders,
+//       totalPages: Math.ceil(totalOrders / limit),
+//       currentPage: page,
+//       orders,
+//     });
+//   } catch (error) {
+//     res
+//       .status(500)
+//       .json({ message: "Error fetching orders", error: error.message });
+//   }
+// };
+
+// 🔵 Get order by ID
+
 exports.getOrdersPagination = async (req, res) => {
   try {
-    let { page = 1, limit = 10 } = req.query; // Default: page 1, 10 orders per page
+    let { page = 1, limit = 10, filter } = req.query;
     page = parseInt(page);
     limit = parseInt(limit);
 
-    const totalOrders = await Order.countDocuments(); // Get total orders count
-    const orders = await Order.find()
+    let query = {}; // Default query
+
+    // Apply date filtering based on 'filter' value
+    if (filter) {
+      const now = moment();
+      if (filter === "24h") {
+        query.created_at = { $gte: now.subtract(24, "hours").toDate() };
+      } else if (filter === "7d") {
+        query.created_at = { $gte: now.subtract(7, "days").toDate() };
+      } else if (filter === "month") {
+        query.created_at = { $gte: now.startOf("month").toDate() };
+      }
+    }
+
+    const totalOrders = await Order.countDocuments(query);
+    const orders = await Order.find(query)
       .sort({ created_at: -1 })
       .skip((page - 1) * limit)
       .limit(limit);
@@ -76,7 +118,6 @@ exports.getOrdersPagination = async (req, res) => {
   }
 };
 
-// 🔵 Get order by ID
 exports.getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
