@@ -90,7 +90,9 @@ exports.getOrdersPagination = async (req, res) => {
     // Apply date filtering based on 'filter' value
     if (filter) {
       const now = moment();
-      if (filter === "24h") {
+      if (filter === "30m") {
+        query.created_at = { $gte: now.subtract(30, "minutes").toDate() };
+      } else if (filter === "24h") {
         query.created_at = { $gte: now.subtract(24, "hours").toDate() };
       } else if (filter === "7d") {
         query.created_at = { $gte: now.subtract(7, "days").toDate() };
