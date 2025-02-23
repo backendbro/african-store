@@ -264,44 +264,39 @@ exports.getOrderById = async (req, res) => {
 
 exports.getMetrics = async (req, res) => {
   try {
-    // Define two periods:
-    // Period A: Last month (e.g., if now is Feb 2025, then January 2025)
-    // Period B: The month before last (e.g., December 2024)
     const now = new Date();
+    // Define Period A: Last month (e.g., if now is Feb 2025, then January 2025)
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 1);
+    // Define Period B: Month before last (e.g., December 2024)
     const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 2, 1);
     const prevMonthEnd = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
-    // Period A metrics (Last Month)
-    const totalOrdersA = await Order.countDocuments({
-      createdAt: { $gte: lastMonthStart, $lt: lastMonthEnd },
-    });
+    // Use "created_at" field (adjust if your model uses a different name)
+    const queryA = { created_at: { $gte: lastMonthStart, $lt: lastMonthEnd } };
+    const queryB = { created_at: { $gte: prevMonthStart, $lt: prevMonthEnd } };
+
+    // Period A Metrics (Last Month)
+    const totalOrdersA = await Order.countDocuments(queryA);
     const salesAggA = await Order.aggregate([
-      { $match: { createdAt: { $gte: lastMonthStart, $lt: lastMonthEnd } } },
+      { $match: queryA },
       { $group: { _id: null, totalSales: { $sum: "$amount_paid" } } },
     ]);
     const totalSalesA = salesAggA.length > 0 ? salesAggA[0].totalSales : 0;
-    const activeUsersA = await Order.distinct("customer_name", {
-      createdAt: { $gte: lastMonthStart, $lt: lastMonthEnd },
-    });
-    const activeUsersCountA = activeUsersA.length; // Unique active users
+    const activeUsersA = await Order.distinct("customer_name", queryA);
+    const activeUsersCountA = activeUsersA.length;
 
-    // Period B metrics (Month before Last)
-    const totalOrdersB = await Order.countDocuments({
-      createdAt: { $gte: prevMonthStart, $lt: prevMonthEnd },
-    });
+    // Period B Metrics (Month Before Last)
+    const totalOrdersB = await Order.countDocuments(queryB);
     const salesAggB = await Order.aggregate([
-      { $match: { createdAt: { $gte: prevMonthStart, $lt: prevMonthEnd } } },
+      { $match: queryB },
       { $group: { _id: null, totalSales: { $sum: "$amount_paid" } } },
     ]);
     const totalSalesB = salesAggB.length > 0 ? salesAggB[0].totalSales : 0;
-    const activeUsersB = await Order.distinct("customer_name", {
-      createdAt: { $gte: prevMonthStart, $lt: prevMonthEnd },
-    });
+    const activeUsersB = await Order.distinct("customer_name", queryB);
     const activeUsersCountB = activeUsersB.length;
 
-    // Calculate percentage changes (if previous period values are > 0)
+    // Calculate percentage changes (if the previous period's value is greater than 0)
     const percentOrdersChange = totalOrdersB
       ? ((totalOrdersA - totalOrdersB) / totalOrdersB) * 100
       : 0;
