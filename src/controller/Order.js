@@ -268,7 +268,6 @@ exports.getMetrics = async (req, res) => {
     // Period A: Last month (e.g., if now is Feb 2025, then January 2025)
     // Period B: The month before last (e.g., December 2024)
     const now = new Date();
-    // Using JavaScript Date, if current month is January (0), subtracting months works correctly
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 1);
     const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 2, 1);
@@ -286,7 +285,7 @@ exports.getMetrics = async (req, res) => {
     const activeUsersA = await Order.distinct("customer_name", {
       createdAt: { $gte: lastMonthStart, $lt: lastMonthEnd },
     });
-    const activeUsersCountA = activeUsersA.length;
+    const activeUsersCountA = activeUsersA.length; // Unique active users
 
     // Period B metrics (Month before Last)
     const totalOrdersB = await Order.countDocuments({
