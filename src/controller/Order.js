@@ -1,7 +1,46 @@
 const Order = require("../model/Order");
+const Product = require("../model/Product");
 const moment = require("moment");
 
 // 🟢 Create a new order
+// exports.createOrder = async (req, res) => {
+//   try {
+//     const {
+//       customer_name,
+//       amount_paid,
+//       payment_method,
+//       order_status,
+//       order_items,
+//     } = req.body;
+
+//     if (
+//       !customer_name ||
+//       !amount_paid ||
+//       !payment_method ||
+//       !order_items.length
+//     ) {
+//       return res.status(400).json({ message: "All fields are required" });
+//     }
+
+//     const newOrder = new Order({
+//       customer_name,
+//       amount_paid,
+//       payment_method,
+//       order_status,
+//       order_items,
+//     });
+
+//     await newOrder.save();
+//     res
+//       .status(201)
+//       .json({ message: "Order created successfully", order: newOrder });
+//   } catch (error) {
+//     res
+//       .status(500)
+//       .json({ message: "Error creating order", error: error.message });
+//   }
+// };
+
 exports.createOrder = async (req, res) => {
   try {
     const {
@@ -21,12 +60,28 @@ exports.createOrder = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    // Enhance each order item with the product image.
+    const enhancedItems = await Promise.all(
+      order_items.map(async (item) => {
+        // Find the product by its name (or use a product ID if available)
+        const product = await Product.findOne({ name: item.food_name });
+        // Use the first image in the product's file array if found
+        return {
+          ...item,
+          image:
+            product && product.file && product.file.length
+              ? product.file[0]
+              : "",
+        };
+      })
+    );
+
     const newOrder = new Order({
       customer_name,
       amount_paid,
       payment_method,
       order_status,
-      order_items,
+      order_items: enhancedItems,
     });
 
     await newOrder.save();

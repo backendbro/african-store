@@ -4,6 +4,7 @@ const OrderItemSchema = new mongoose.Schema({
   food_name: { type: String, required: true },
   quantity: { type: Number, required: true },
   price: { type: Number, required: true },
+  image: { type: String },
 });
 
 const OrderSchema = new mongoose.Schema(
