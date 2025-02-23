@@ -262,7 +262,7 @@ exports.getOrderById = async (req, res) => {
 //   }
 // };
 
-giexports.getMetrics = async (req, res) => {
+exports.getMetrics = async (req, res) => {
   try {
     const now = new Date();
     // Define Period A: Last month (e.g., if now is Feb 2025, then January 2025)
@@ -278,7 +278,6 @@ giexports.getMetrics = async (req, res) => {
 
     // Period A Metrics (Last Month)
     const totalOrdersA = await Order.countDocuments(queryA);
-
     const salesAggA = await Order.aggregate([
       { $match: queryA },
       { $group: { _id: null, totalSales: { $sum: "$amount_paid" } } },
