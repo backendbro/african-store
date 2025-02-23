@@ -262,6 +262,53 @@ exports.getOrderById = async (req, res) => {
 //   }
 // };
 
+exports.getMetrics = async (req, res) => {
+  try {
+    let { filter } = req.query;
+    let query = {};
+
+    if (filter) {
+      const now = new Date();
+      if (filter === "24h") {
+        query.createdAt = {
+          $gte: new Date(now.getTime() - 24 * 60 * 60 * 1000),
+        };
+      } else if (filter === "7d") {
+        query.createdAt = {
+          $gte: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
+        };
+      } else if (filter === "month") {
+        // Start of the current month
+        query.createdAt = {
+          $gte: new Date(now.getFullYear(), now.getMonth(), 1),
+        };
+      }
+    }
+
+    // Total Orders: count orders matching the query
+    const totalOrders = await Order.countDocuments(query);
+
+    // Total Sales: sum the amount_paid of orders matching the query
+    const salesAgg = await Order.aggregate([
+      { $match: query },
+      { $group: { _id: null, totalSales: { $sum: "$amount_paid" } } },
+    ]);
+    const totalSales = salesAgg.length > 0 ? salesAgg[0].totalSales : 0;
+
+    // Active Users: count distinct customer names from orders matching the query
+    const activeUsers = await Order.distinct("customer_name", query);
+    const activeUsersCount = activeUsers.length;
+
+    res
+      .status(200)
+      .json({ totalSales, totalOrders, activeUsers: activeUsersCount });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error fetching metrics", error: error.message });
+  }
+};
+
 exports.updateByOrderId = async (req, res) => {
   try {
     const { id } = req.params;
