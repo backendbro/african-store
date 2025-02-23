@@ -237,14 +237,56 @@ exports.getOrderById = async (req, res) => {
   }
 };
 
+// exports.updateByOrderId = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const updateData = req.body; // Data to update
+
+//     console.log(updateData);
+//     const updatedOrder = await Order.findByIdAndUpdate(id, updateData, {
+//       new: true, // Return updated document
+//       runValidators: true, // Ensure validation is applied
+//     });
+
+//     if (!updatedOrder) {
+//       return res.status(404).json({ message: "Order not found" });
+//     }
+
+//     res
+//       .status(200)
+//       .json({ message: "Order updated successfully", updatedOrder });
+//   } catch (error) {
+//     res
+//       .status(500)
+//       .json({ message: "Error updating order", error: error.message });
+//   }
+// };
+
 exports.updateByOrderId = async (req, res) => {
   try {
     const { id } = req.params;
-    const updateData = req.body; // Data to update
+    let updateData = req.body; // Data to update
+
+    // If order_items is provided in the update data, enhance each item with the product image.
+    if (updateData.order_items && updateData.order_items.length) {
+      updateData.order_items = await Promise.all(
+        updateData.order_items.map(async (item) => {
+          // Find the product by its name (or use a product ID if available)
+          const product = await Product.findOne({ name: item.food_name });
+          return {
+            ...item,
+            image:
+              product && product.file && product.file.length
+                ? product.file[0]
+                : "",
+          };
+        })
+      );
+    }
 
     console.log(updateData);
     const updatedOrder = await Order.findByIdAndUpdate(id, updateData, {
-      new: true, // Return updated document
+      new: true, // Return the updated document
       runValidators: true, // Ensure validation is applied
     });
 
