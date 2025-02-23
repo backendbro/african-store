@@ -262,7 +262,7 @@ exports.getOrderById = async (req, res) => {
 //   }
 // };
 
-exports.getMetrics = async (req, res) => {
+giexports.getMetrics = async (req, res) => {
   try {
     const now = new Date();
     // Define Period A: Last month (e.g., if now is Feb 2025, then January 2025)
@@ -273,11 +273,12 @@ exports.getMetrics = async (req, res) => {
     const prevMonthEnd = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
     // Use "created_at" field (adjust if your model uses a different name)
-    const queryA = { created_at: { $gte: lastMonthStart, $lt: lastMonthEnd } };
-    const queryB = { created_at: { $gte: prevMonthStart, $lt: prevMonthEnd } };
+    const queryA = { createdAt: { $gte: lastMonthStart, $lt: lastMonthEnd } };
+    const queryB = { createdAt: { $gte: prevMonthStart, $lt: prevMonthEnd } };
 
     // Period A Metrics (Last Month)
     const totalOrdersA = await Order.countDocuments(queryA);
+
     const salesAggA = await Order.aggregate([
       { $match: queryA },
       { $group: { _id: null, totalSales: { $sum: "$amount_paid" } } },
