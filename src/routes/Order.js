@@ -8,6 +8,7 @@ const {
   deleteOrder,
   getOrdersPagination,
   updateByOrderId,
+  getDashboardStats,
 } = require("../controller/Order");
 const { protect, authorize } = require("../middleware/Auth");
 
