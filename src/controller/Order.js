@@ -256,39 +256,39 @@ exports.getDashboardStats = async (req, res) => {
 
     // Pending Orders
     const pendingCurrent = await Order.countDocuments({
-      status: "pending",
+      order_status: "pending", // Updated field name
       created_at: { $gte: currentPeriodStart },
     });
     const pendingPrevious = await Order.countDocuments({
-      status: "pending",
+      order_status: "pending", // Updated field name
       created_at: { $gte: previousPeriodStart, $lt: previousPeriodEnd },
     });
     const pendingChange = calcChange(pendingCurrent, pendingPrevious);
 
     // Completed Orders
     const completedCurrent = await Order.countDocuments({
-      status: "completed",
+      order_status: "successful", // Updated field name
       created_at: { $gte: currentPeriodStart },
     });
     const completedPrevious = await Order.countDocuments({
-      status: "completed",
+      order_status: "successful", // Updated field name
       created_at: { $gte: previousPeriodStart, $lt: previousPeriodEnd },
     });
     const completedChange = calcChange(completedCurrent, completedPrevious);
 
     // Cancelled Orders
     const cancelledCurrent = await Order.countDocuments({
-      status: "cancelled",
+      order_status: "failed", // Updated field name
       created_at: { $gte: currentPeriodStart },
     });
     const cancelledPrevious = await Order.countDocuments({
-      status: "cancelled",
+      order_status: "failed", // Updated field name
       created_at: { $gte: previousPeriodStart, $lt: previousPeriodEnd },
     });
     const cancelledChange = calcChange(cancelledCurrent, cancelledPrevious);
 
     // Refund Requests
-    // Assume that orders with refund requests have a boolean field "refundRequested" set to true
+    // Make sure the refundRequested field exists in your documents.
     const refundCurrent = await Order.countDocuments({
       refundRequested: true,
       created_at: { $gte: currentPeriodStart },
@@ -299,31 +299,28 @@ exports.getDashboardStats = async (req, res) => {
     });
     const refundChange = calcChange(refundCurrent, refundPrevious);
 
-    // Return the stats in a format that matches your dashboard HTML
     res.status(200).json({
       pendingOrders: {
         count: pendingCurrent,
-        change: pendingChange, // e.g., +2.5%
+        change: pendingChange,
       },
       completedOrders: {
         count: completedCurrent,
-        change: completedChange, // e.g., +2.0%
+        change: completedChange,
       },
       cancelledOrders: {
         count: cancelledCurrent,
-        change: cancelledChange, // e.g., -0.25%
+        change: cancelledChange,
       },
       refundRequests: {
         count: refundCurrent,
-        change: refundChange, // e.g., +1.25%
+        change: refundChange,
       },
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Error fetching dashboard stats",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error fetching dashboard stats",
+      error: error.message,
+    });
   }
 };
