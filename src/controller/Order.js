@@ -262,8 +262,6 @@ exports.getOrderById = async (req, res) => {
 //   }
 // };
 
-const Order = require("./orderModel"); // Adjust path as needed
-
 exports.getMetrics = async (req, res) => {
   try {
     // Define two periods:
