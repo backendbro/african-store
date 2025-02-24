@@ -1,5 +1,6 @@
 const Order = require("../model/Order");
 const Product = require("../model/Product");
+const { User } = require("../model/User");
 const moment = require("moment");
 
 // 🟢 Create a new order
@@ -107,73 +108,29 @@ exports.getOrders = async (req, res) => {
   }
 };
 
-// exports.getOrdersPagination = async (req, res) => {
-//   try {
-//     let { page = 1, limit = 10 } = req.query; // Default: page 1, 10 orders per page
-//     page = parseInt(page);
-//     limit = parseInt(limit);
+exports.getRecentActivity = async (req, res) => {
+  try {
+    // Fetch latest 3 users, orders, and products
+    const latestUsers = await User.find().sort({ createdAt: -1 }).limit(3);
+    const latestOrders = await Order.find().sort({ createdAt: -1 }).limit(3);
+    const latestProducts = await Product.find()
+      .sort({ createdAt: -1 })
+      .limit(3);
 
-//     const totalOrders = await Order.countDocuments(); // Get total orders count
-//     const orders = await Order.find()
-//       .sort({ created_at: -1 })
-//       .skip((page - 1) * limit)
-//       .limit(limit);
+    console.log(latestUsers);
 
-//     res.status(200).json({
-//       totalOrders,
-//       totalPages: Math.ceil(totalOrders / limit),
-//       currentPage: page,
-//       orders,
-//     });
-//   } catch (error) {
-//     res
-//       .status(500)
-//       .json({ message: "Error fetching orders", error: error.message });
-//   }
-// };
-
-// 🔵 Get order by ID
-
-// exports.getOrdersPagination = async (req, res) => {
-//   try {
-//     let { page = 1, limit = 10, filter } = req.query;
-//     page = parseInt(page);
-//     limit = parseInt(limit);
-
-//     let query = {}; // Default query
-
-//     // Apply date filtering based on 'filter' value
-//     if (filter) {
-//       const now = moment();
-//       if (filter === "30m") {
-//         query.created_at = { $gte: now.subtract(30, "minutes").toDate() };
-//       } else if (filter === "24h") {
-//         query.created_at = { $gte: now.subtract(24, "hours").toDate() };
-//       } else if (filter === "7d") {
-//         query.created_at = { $gte: now.subtract(7, "days").toDate() };
-//       } else if (filter === "month") {
-//         query.created_at = { $gte: now.startOf("month").toDate() };
-//       }
-//     }
-
-//     const totalOrders = await Order.countDocuments(query);
-//     const orders = await Order.find(query)
-//       .sort({ created_at: -1 })
-//       .skip((page - 1) * limit)
-//       .limit(limit);
-
-//     res.status(200).json({
-//       totalOrders,
-//       totalPages: Math.ceil(totalOrders / limit),
-//       currentPage: page,
-//       orders,
-//     });
-//   } catch (error) {
-//     res
-//       .status(500)
-//       .json({ message: "Error fetching orders", error: error.message });
-//   }
-// };
+    res.status(200).json({
+      success: true,
+      data: {
+        users: latestUsers,
+        orders: latestOrders,
+        products: latestProducts,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error", error });
+  }
+};
 
 exports.getOrdersPagination = async (req, res) => {
   try {
@@ -236,31 +193,6 @@ exports.getOrderById = async (req, res) => {
       .json({ message: "Error fetching order", error: error.message });
   }
 };
-
-// exports.updateByOrderId = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const updateData = req.body; // Data to update
-
-//     console.log(updateData);
-//     const updatedOrder = await Order.findByIdAndUpdate(id, updateData, {
-//       new: true, // Return updated document
-//       runValidators: true, // Ensure validation is applied
-//     });
-
-//     if (!updatedOrder) {
-//       return res.status(404).json({ message: "Order not found" });
-//     }
-
-//     res
-//       .status(200)
-//       .json({ message: "Order updated successfully", updatedOrder });
-//   } catch (error) {
-//     res
-//       .status(500)
-//       .json({ message: "Error updating order", error: error.message });
-//   }
-// };
 
 exports.getMostSoldItems = async (req, res) => {
   try {
