@@ -278,6 +278,7 @@ exports.getMetrics = async (req, res) => {
     const totalSales =
       totalSalesAgg.length > 0 ? totalSalesAgg[0].totalSales : 0;
     const activeUsers = await Order.distinct("customer_name", {});
+    console.log(activeUsers);
     const activeUsersCount = activeUsers.length;
 
     // Fetch Last Month's Metrics
