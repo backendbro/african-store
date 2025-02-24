@@ -23,9 +23,11 @@ router.post(
   protect,
   authorize("admin", "owner"),
   upload,
-  createProducts
+  createProducts,
+  getProductsAdmin
 );
 router.get("/", getProducts);
+router.get("/", getProductsAdmin);
 router.get("/normal", getNormalProducts);
 router.get("/category", getCategoryProducts);
 router.get("/normalize", getNormalPaginationProducts);

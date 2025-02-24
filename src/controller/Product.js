@@ -231,6 +231,53 @@ exports.getProducts = async (req, res, next) => {
   }
 };
 
+exports.getProductsAdmin = async (req, res, next) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    let filter = {};
+
+    if (req.query.categoryId) {
+      filter.category = req.query.categoryId;
+    }
+
+    if (req.query.filterType === "new") {
+      // Assuming new products are those added in the last 7 days
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      filter.createdAt = { $gte: sevenDaysAgo };
+    } else if (req.query.filterType === "lowStock") {
+      // Assuming low stock is when StockQuantity <= 5
+      filter.StockQuantity = { $lte: 5 };
+    }
+
+    const products = await Product.find(filter)
+      .populate({ path: "category", select: "name description" })
+      .skip(skip)
+      .limit(limit);
+
+    const totalProducts = await Product.countDocuments(filter);
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    res.status(200).json({
+      success: true,
+      count: products.length,
+      data: products,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+        totalProducts,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 exports.getNormalProducts = async (req, res) => {
   const products = await Product.find();
   return res.status(200).json({ data: products });
