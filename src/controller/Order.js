@@ -265,54 +265,57 @@ exports.getOrderById = async (req, res) => {
 exports.getMetrics = async (req, res) => {
   try {
     const now = new Date();
-    // Define Period A: Last month (e.g., if now is Feb 2025, then January 2025)
+
+    // Define Last Month's Range (e.g., January 2025 if today is Feb 2025)
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 1);
-    // Define Period B: Month before last (e.g., December 2024)
-    const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 2, 1);
-    const prevMonthEnd = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
-    // Use "created_at" field (adjust if your model uses a different name)
-    const queryA = { created_at: { $gte: lastMonthStart, $lt: lastMonthEnd } };
-    const queryB = { created_at: { $gte: prevMonthStart, $lt: prevMonthEnd } };
-
-    // Period A Metrics (Last Month)
-    const totalOrdersA = await Order.countDocuments(queryA);
-    console.log(await Order.find(queryA).countDocuments()); // Should not be 0
-
-    const salesAggA = await Order.aggregate([
-      { $match: queryA },
+    // Fetch Total Metrics Across All Records
+    const totalOrders = await Order.countDocuments({});
+    const totalSalesAgg = await Order.aggregate([
       { $group: { _id: null, totalSales: { $sum: "$amount_paid" } } },
     ]);
-    const totalSalesA = salesAggA.length > 0 ? salesAggA[0].totalSales : 0;
-    const activeUsersA = await Order.distinct("customer_name", queryA);
-    const activeUsersCountA = activeUsersA.length;
+    const totalSales =
+      totalSalesAgg.length > 0 ? totalSalesAgg[0].totalSales : 0;
+    const activeUsers = await Order.distinct("customer_name", {});
+    const activeUsersCount = activeUsers.length;
 
-    // Period B Metrics (Month Before Last)
-    const totalOrdersB = await Order.countDocuments(queryB);
-    const salesAggB = await Order.aggregate([
-      { $match: queryB },
+    // Fetch Last Month's Metrics
+    const lastMonthQuery = {
+      createdAt: { $gte: lastMonthStart, $lt: lastMonthEnd },
+    };
+
+    const totalOrdersLastMonth = await Order.countDocuments(lastMonthQuery);
+    const salesAggLastMonth = await Order.aggregate([
+      { $match: lastMonthQuery },
       { $group: { _id: null, totalSales: { $sum: "$amount_paid" } } },
     ]);
-    const totalSalesB = salesAggB.length > 0 ? salesAggB[0].totalSales : 0;
-    const activeUsersB = await Order.distinct("customer_name", queryB);
-    const activeUsersCountB = activeUsersB.length;
+    const totalSalesLastMonth =
+      salesAggLastMonth.length > 0 ? salesAggLastMonth[0].totalSales : 0;
+    const activeUsersLastMonth = await Order.distinct(
+      "customer_name",
+      lastMonthQuery
+    );
+    const activeUsersCountLastMonth = activeUsersLastMonth.length;
 
-    // Calculate percentage changes (if the previous period's value is greater than 0)
-    const percentOrdersChange = totalOrdersB
-      ? ((totalOrdersA - totalOrdersB) / totalOrdersB) * 100
+    // Compute Percentage Change Based on Last Month's Performance
+    const percentOrdersChange = totalOrdersLastMonth
+      ? ((totalOrders - totalOrdersLastMonth) / totalOrdersLastMonth) * 100
       : 0;
-    const percentSalesChange = totalSalesB
-      ? ((totalSalesA - totalSalesB) / totalSalesB) * 100
+    const percentSalesChange = totalSalesLastMonth
+      ? ((totalSales - totalSalesLastMonth) / totalSalesLastMonth) * 100
       : 0;
-    const percentActiveUsersChange = activeUsersCountB
-      ? ((activeUsersCountA - activeUsersCountB) / activeUsersCountB) * 100
+    const percentActiveUsersChange = activeUsersCountLastMonth
+      ? ((activeUsersCount - activeUsersCountLastMonth) /
+          activeUsersCountLastMonth) *
+        100
       : 0;
 
+    // Return Metrics
     res.status(200).json({
-      totalSales: totalSalesA,
-      totalOrders: totalOrdersA,
-      activeUsers: activeUsersCountA,
+      totalSales,
+      totalOrders,
+      activeUsers: activeUsersCount,
       percentSalesChange,
       percentOrdersChange,
       percentActiveUsersChange,
