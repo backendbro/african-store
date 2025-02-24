@@ -27,7 +27,7 @@ router.post(
   getProductsAdmin
 );
 router.get("/", getProducts);
-router.get("/", getProductsAdmin);
+router.get("/product-admin", getProductsAdmin);
 router.get("/normal", getNormalProducts);
 router.get("/category", getCategoryProducts);
 router.get("/normalize", getNormalPaginationProducts);
