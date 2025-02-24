@@ -273,11 +273,13 @@ exports.getMetrics = async (req, res) => {
     const prevMonthEnd = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
     // Use "created_at" field (adjust if your model uses a different name)
-    const queryA = { createdAt: { $gte: lastMonthStart, $lt: lastMonthEnd } };
-    const queryB = { createdAt: { $gte: prevMonthStart, $lt: prevMonthEnd } };
+    const queryA = { created_at: { $gte: lastMonthStart, $lt: lastMonthEnd } };
+    const queryB = { created_at: { $gte: prevMonthStart, $lt: prevMonthEnd } };
 
     // Period A Metrics (Last Month)
     const totalOrdersA = await Order.countDocuments(queryA);
+    console.log(await Order.find(queryA).countDocuments()); // Should not be 0
+
     const salesAggA = await Order.aggregate([
       { $match: queryA },
       { $group: { _id: null, totalSales: { $sum: "$amount_paid" } } },
