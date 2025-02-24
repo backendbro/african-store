@@ -156,6 +156,7 @@ const createProductWithImages = async (
       Discount: parseInt(formData.Discount),
       DiscountType: formData.DiscountType,
       PackagingType: formData.PackagingType,
+      Variants: formData.Variants,
       file: imageUrls,
       user: userId,
       category: categoryId,
