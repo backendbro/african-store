@@ -90,6 +90,7 @@ exports.createProducts = async (req, res) => {
 
     // Upload each image to Cloudinary
     for (const image of req.files) {
+      console.log(image);
       const stream = cloudinary.uploader.upload_stream(
         { folder: "products/" }, // Optional: specify folder in Cloudinary
         (error, result) => {
@@ -99,6 +100,7 @@ exports.createProducts = async (req, res) => {
               .status(500)
               .json({ error: "Error uploading image to Cloudinary" });
           }
+          console.log(result.secure_url);
           imageUrls.push(result.secure_url); // Store the uploaded image URL
 
           // If all images are uploaded, create the product
