@@ -262,6 +262,38 @@ exports.getOrderById = async (req, res) => {
 //   }
 // };
 
+exports.getMostSoldItems = async (req, res) => {
+  try {
+    // Aggregate to find most sold items
+    const mostSoldItems = await Order.aggregate([
+      { $unwind: "$items" }, // Flatten items array
+      {
+        $group: { _id: "$items.name", totalSold: { $sum: "$items.quantity" } },
+      },
+      { $sort: { totalSold: -1 } }, // Sort by highest sales
+      { $limit: 5 }, // Limit to top 5 items
+    ]);
+
+    // Find max sold quantity to calculate percentage
+    const maxSold = mostSoldItems.length > 0 ? mostSoldItems[0].totalSold : 1;
+
+    // Format response with percentages
+    const response = mostSoldItems.map((item) => ({
+      name: item._id,
+      percentage: Math.round((item.totalSold / maxSold) * 100),
+    }));
+
+    res.status(200).json(response);
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message: "Error fetching most sold items",
+        error: error.message,
+      });
+  }
+};
+
 exports.getMetrics = async (req, res) => {
   try {
     const now = new Date();
