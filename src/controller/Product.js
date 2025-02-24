@@ -223,6 +223,7 @@ exports.getProducts = async (req, res, next) => {
         totalPages,
         hasNextPage: page < totalPages,
         hasPrevPage: page > 1,
+        totalProducts,
       },
     });
   } catch (error) {
