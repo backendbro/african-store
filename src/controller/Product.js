@@ -73,7 +73,6 @@ exports.getCategoryProducts = async (req, res) => {
 
 exports.createProducts = async (req, res) => {
   try {
-    console.log(req.body);
     const formData = req.body;
 
     if (!req.files) {
@@ -81,6 +80,7 @@ exports.createProducts = async (req, res) => {
     }
 
     console.log(formData);
+    console.log(req.files);
 
     const imageUrls = []; // This will hold the URLs of uploaded images
 
