@@ -266,9 +266,12 @@ exports.getMostSoldItems = async (req, res) => {
   try {
     // Aggregate to find most sold items
     const mostSoldItems = await Order.aggregate([
-      { $unwind: "$items" }, // Flatten items array
+      { $unwind: "$order_items" }, // Unwind the 'order_items' array
       {
-        $group: { _id: "$items.name", totalSold: { $sum: "$items.quantity" } },
+        $group: {
+          _id: "$order_items.food_name",
+          totalSold: { $sum: "$order_items.quantity" },
+        },
       },
       { $sort: { totalSold: -1 } }, // Sort by highest sales
       { $limit: 5 }, // Limit to top 5 items
@@ -285,12 +288,10 @@ exports.getMostSoldItems = async (req, res) => {
 
     res.status(200).json(response);
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Error fetching most sold items",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error fetching most sold items",
+      error: error.message,
+    });
   }
 };
 
