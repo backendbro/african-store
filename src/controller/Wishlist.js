@@ -118,6 +118,7 @@ async function addToWishlist(req, res) {
       return res.status(404).json({ message: "Product not found" });
     }
 
+    console.log(product);
     // Find or create the user's wishlist
     let wishlist = await Wishlist.findOne({ userId });
 
