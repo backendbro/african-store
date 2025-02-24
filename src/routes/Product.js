@@ -9,6 +9,7 @@ const {
   getCategoryProducts,
   getNormalProducts,
   getNormalPaginationProducts,
+  getProductsAdmin,
 } = require("../controller/Product");
 const router = express.Router();
 
@@ -23,9 +24,9 @@ router.post(
   protect,
   authorize("admin", "owner"),
   upload,
-  createProducts,
-  getProductsAdmin
+  createProducts
 );
+
 router.get("/", getProducts);
 router.get("/product-admin", getProductsAdmin);
 router.get("/normal", getNormalProducts);
