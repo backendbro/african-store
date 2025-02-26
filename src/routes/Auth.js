@@ -19,6 +19,7 @@ router.get("/me", protect, loggedInUser);
 // Use upload.single with the field name from your HTML input (e.g., "profilePicture")
 router.put(
   "/user/profile-picture",
+  protect,
   upload.single("profilePicture"),
   updateProfilePicture
 );
