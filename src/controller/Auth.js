@@ -112,17 +112,15 @@ exports.updateProfile = async (req, res) => {
     const userId = req.user.id;
     const { firstName, lastName, email, password } = req.body;
 
-    // Load the user document from the database
-    let user = await User.findById(userId);
+    // Find the user document
+    let user = await User.findById(userId).select("+password");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Update the username by combining first and last name (if provided)
+    // Optionally update the username by combining first and last name
     if (firstName || lastName) {
-      const updatedUsername = `${firstName ? firstName : ""} ${
-        lastName ? lastName : ""
-      }`.trim();
+      const updatedUsername = `${firstName || ""} ${lastName || ""}`.trim();
       if (updatedUsername) {
         user.username = updatedUsername;
       }
@@ -141,7 +139,7 @@ exports.updateProfile = async (req, res) => {
     // Save the updated user document
     await user.save();
 
-    // Optionally, remove the password field from the returned data
+    // Remove sensitive fields before returning
     const userData = user.toObject();
     delete userData.password;
 
