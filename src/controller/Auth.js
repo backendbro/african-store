@@ -110,7 +110,8 @@ exports.updateProfile = async (req, res) => {
   try {
     // Assuming your authentication middleware sets req.user.id
     const userId = req.user.id;
-    const { firstName, lastName, email, password } = req.body;
+    // Destructure the new username field along with the other fields
+    const { username, firstName, lastName, email, password } = req.body;
 
     // Find the user document
     let user = await User.findById(userId).select("+password");
@@ -118,8 +119,10 @@ exports.updateProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Optionally update the username by combining first and last name
-    if (firstName || lastName) {
+    // If a new username is provided, update it; otherwise, update based on first/last name if provided
+    if (username) {
+      user.username = username;
+    } else if (firstName || lastName) {
       const updatedUsername = `${firstName || ""} ${lastName || ""}`.trim();
       if (updatedUsername) {
         user.username = updatedUsername;
