@@ -155,7 +155,6 @@ exports.getReviews = async (req, res) => {
 
     // Fetch paginated reviews
     const reviews = await Review.find(query)
-      .populate("user")
       .sort({ _id: -1 }) // Sort in descending order
       .limit(parseInt(limit));
 
