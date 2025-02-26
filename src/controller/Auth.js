@@ -85,7 +85,7 @@ exports.updateProfilePicture = async (req, res) => {
 
     // Update the user's profile picture in the database
     const updatedUser = await User.findByIdAndUpdate(
-      { id: userId },
+      userId,
       { profilePicture: result.secure_url },
       { new: true }
     );
