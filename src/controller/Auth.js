@@ -1,6 +1,7 @@
 const { User } = require("../model/User");
 const { Readable } = require("stream");
 const cloudinary = require("cloudinary").v2;
+const bcrypt = require("bcryptjs");
 
 cloudinary.config({
   cloud_name: "dyw5q4fzd",
@@ -102,6 +103,55 @@ exports.updateProfilePicture = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Error updating profile picture" });
+  }
+};
+
+exports.updateProfile = async (req, res) => {
+  try {
+    // Assuming your authentication middleware sets req.user.id
+    const userId = req.user.id;
+    const { firstName, lastName, email, password } = req.body;
+
+    // Load the user document from the database
+    let user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update the username by combining first and last name (if provided)
+    if (firstName || lastName) {
+      const updatedUsername = `${firstName ? firstName : ""} ${
+        lastName ? lastName : ""
+      }`.trim();
+      if (updatedUsername) {
+        user.username = updatedUsername;
+      }
+    }
+
+    // Update email if provided
+    if (email) {
+      user.email = email;
+    }
+
+    // Update password if provided; the pre-save hook will hash it
+    if (password) {
+      user.password = password;
+    }
+
+    // Save the updated user document
+    await user.save();
+
+    // Optionally, remove the password field from the returned data
+    const userData = user.toObject();
+    delete userData.password;
+
+    res.status(200).json({
+      message: "Profile updated successfully",
+      data: userData,
+    });
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 

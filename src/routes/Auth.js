@@ -9,6 +9,7 @@ const {
   Login,
   loggedInUser,
   updateProfilePicture,
+  updateProfile,
 } = require("../controller/Auth");
 const { protect } = require("../middleware/Auth");
 
@@ -23,5 +24,6 @@ router.put(
   upload.single("profilePicture"),
   updateProfilePicture
 );
+router.put("/profile", protect, updateProfile);
 
 module.exports = router;
