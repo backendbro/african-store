@@ -139,36 +139,6 @@ exports.createReview = async (req, res) => {
 //   }
 // };
 
-// exports.getReviews = async (req, res) => {
-//   try {
-//     const { productId } = req.params;
-//     const { cursor, limit = 5 } = req.query; // Get cursor and limit from query params
-
-//     if (!productId) {
-//       return res.status(400).json({ message: "Product ID is required." });
-//     }
-
-//     let query = { productId };
-//     if (cursor) {
-//       query._id = { $lt: cursor }; // Fetch reviews with IDs less than the cursor
-//     }
-
-//     // Fetch paginated reviews
-//     const reviews = await Review.find(query)
-//       .sort({ _id: -1 }) // Sort in descending order
-//       .limit(parseInt(limit));
-
-//     // Count total reviews for the product
-//     const totalReviews = await Review.countDocuments({ productId });
-
-//     const hasMore = reviews.length === parseInt(limit); // If we fetch `limit` records, there's more
-
-//     res.status(200).json({ reviews, hasMore, totalReviews });
-//   } catch (error) {
-//     res.status(500).json({ message: "Server Error", error: error.message });
-//   }
-// };
-
 exports.getReviews = async (req, res) => {
   try {
     const { productId } = req.params;
@@ -183,16 +153,16 @@ exports.getReviews = async (req, res) => {
       query._id = { $lt: cursor }; // Fetch reviews with IDs less than the cursor
     }
 
-    // Fetch paginated reviews and populate the 'user' field with selected user properties.
+    // Fetch paginated reviews
     const reviews = await Review.find(query)
-      .populate("user", "username profilePicture") // Populate 'user' field with username and profilePicture
+      .populate("user")
       .sort({ _id: -1 }) // Sort in descending order
       .limit(parseInt(limit));
 
     // Count total reviews for the product
     const totalReviews = await Review.countDocuments({ productId });
 
-    const hasMore = reviews.length === parseInt(limit); // If we fetched `limit` records, there's more
+    const hasMore = reviews.length === parseInt(limit); // If we fetch `limit` records, there's more
 
     res.status(200).json({ reviews, hasMore, totalReviews });
   } catch (error) {
