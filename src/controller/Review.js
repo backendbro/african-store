@@ -2,6 +2,50 @@ const Review = require("../model/Reviews");
 
 // Create a review for a specific product
 
+// exports.createReview = async (req, res) => {
+//   try {
+//     const { productId, name, email, rating, comment, termsAccepted } = req.body;
+
+//     if (
+//       !name ||
+//       !email ||
+//       !rating ||
+//       !comment ||
+//       !termsAccepted ||
+//       !productId
+//     ) {
+//       return res.status(400).json({ message: "All fields are required." });
+//     }
+
+//     // Count user's existing reviews for the product
+//     const userReviews = await Review.countDocuments({ productId, email });
+
+//     if (userReviews >= 2) {
+//       return res
+//         .status(400)
+//         .json({ message: "You can only submit up to 2 reviews per product." });
+//     }
+
+//     // Create a new review if limit is not reached
+//     const newReview = new Review({
+//       productId,
+//       name,
+//       email,
+//       rating,
+//       comment,
+//       termsAccepted,
+//     });
+
+//     await newReview.save();
+
+//     res
+//       .status(201)
+//       .json({ message: "Review submitted successfully", review: newReview });
+//   } catch (error) {
+//     res.status(500).json({ message: "Server Error", error: error.message });
+//   }
+// };
+
 exports.createReview = async (req, res) => {
   try {
     const { productId, name, email, rating, comment, termsAccepted } = req.body;
@@ -17,18 +61,24 @@ exports.createReview = async (req, res) => {
       return res.status(400).json({ message: "All fields are required." });
     }
 
-    // Count user's existing reviews for the product
-    const userReviews = await Review.countDocuments({ productId, email });
+    // Get the user ID from the authentication middleware (ensure req.user is set)
+    const userId = req.user.id;
 
+    // Count user's existing reviews for the product using the user ID
+    const userReviews = await Review.countDocuments({
+      productId,
+      user: userId,
+    });
     if (userReviews >= 2) {
       return res
         .status(400)
         .json({ message: "You can only submit up to 2 reviews per product." });
     }
 
-    // Create a new review if limit is not reached
+    // Create a new review with the user ID included
     const newReview = new Review({
       productId,
+      user: userId,
       name,
       email,
       rating,
