@@ -5,6 +5,6 @@ const { protect, authorize } = require("../middleware/Auth");
 
 // Define routes
 router.get("/", getAllUsers);
-router.put("/", updateUser);
+router.put("/update-user", updateUser);
 
 module.exports = router;
