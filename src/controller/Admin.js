@@ -116,7 +116,7 @@ exports.changeAdminPassword = async (req, res) => {
     }
 
     // Fetch the target user
-    const targetUser = await User.findById(userId).select("+password");
+    const targetUser = await User.findById(userId);
     if (!targetUser) {
       return res.status(404).json({ message: "Admin not found" });
     }
@@ -127,13 +127,8 @@ exports.changeAdminPassword = async (req, res) => {
         .json({ message: "Only admin passwords can be changed" });
     }
 
-    // ✅ Only hash password if the "pre save" hook is NOT present
-    if (!targetUser.isModified("password")) {
-      const salt = await bcrypt.genSalt(10);
-      targetUser.password = await bcrypt.hash(newPassword, salt);
-    }
-
-    targetUser.markModified("password"); // Ensure Mongoose detects password change
+    // ✅ Update the password (Mongoose `pre("save")` hook will hash it)
+    targetUser.password = newPassword;
     await targetUser.save();
 
     res.status(200).json({ message: "Admin password updated successfully" });
