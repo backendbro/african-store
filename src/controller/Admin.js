@@ -75,3 +75,31 @@ exports.toggleUserRole = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+// Controller to delete a user by ID
+exports.deleteUser = async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    // First, find the user by ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Prevent deletion if the user is the owner
+    if (user.role === "owner") {
+      return res.status(403).json({ error: "Cannot delete owner" });
+    }
+
+    // Delete the user if not the owner
+    const deletedUser = await User.findByIdAndDelete(userId);
+    return res
+      .status(200)
+      .json({ message: "User deleted successfully", user: deletedUser });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
