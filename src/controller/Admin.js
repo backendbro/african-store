@@ -1,4 +1,5 @@
 const { User } = require("../model/User");
+const bcrypt = require("bcryptjs");
 
 exports.getAllUsers = async (req, res) => {
   try {
@@ -101,5 +102,40 @@ exports.deleteUser = async (req, res) => {
   } catch (error) {
     console.error("Error deleting user:", error);
     return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+exports.changeAdminPassword = async (req, res) => {
+  try {
+    const { userId, newPassword } = req.body;
+
+    if (!userId || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "User ID and new password are required" });
+    }
+
+    // Fetch the target user
+    const targetUser = await User.findById(userId).select("+password");
+    if (!targetUser) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    if (targetUser.role !== "admin") {
+      return res
+        .status(400)
+        .json({ message: "Only admin passwords can be changed" });
+    }
+
+    // Hash the new password
+    const salt = await bcrypt.genSalt(10);
+    targetUser.password = await bcrypt.hash(newPassword, salt);
+
+    await targetUser.save();
+
+    res.status(200).json({ message: "Admin password updated successfully" });
+  } catch (error) {
+    console.error("Error changing admin password:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
