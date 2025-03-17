@@ -127,10 +127,13 @@ exports.changeAdminPassword = async (req, res) => {
         .json({ message: "Only admin passwords can be changed" });
     }
 
-    // Hash the new password
-    const salt = await bcrypt.genSalt(10);
-    targetUser.password = await bcrypt.hash(newPassword, salt);
+    // ✅ Only hash password if the "pre save" hook is NOT present
+    if (!targetUser.isModified("password")) {
+      const salt = await bcrypt.genSalt(10);
+      targetUser.password = await bcrypt.hash(newPassword, salt);
+    }
 
+    targetUser.markModified("password"); // Ensure Mongoose detects password change
     await targetUser.save();
 
     res.status(200).json({ message: "Admin password updated successfully" });
