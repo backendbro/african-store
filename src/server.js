@@ -28,6 +28,7 @@ const main = async () => {
     "https://www.africanmarkets.eu",
     "https://african-store-ad.vercel.app",
     "https://admin.africanmarkets.eu",
+    "https://african-store-owner.vercel.app",
   ];
   const app = express();
   app.use(
