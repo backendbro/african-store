@@ -12,6 +12,6 @@ const { protect, authorize } = require("../middleware/Auth");
 router.get("/", getAllUsers);
 router.put("/update-user/:id", updateUser);
 router.put("/toggle-role/:id", toggleUserRole);
-router.delete("/", deleteUser);
+router.delete("/delete-user/:id", deleteUser);
 
 module.exports = router;
