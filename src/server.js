@@ -4,7 +4,8 @@ dotenv.config();
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-
+const { handleWebhook } = require("./webhook");
+const bodyParser = require("body-parser");
 const connectDb = require("./db/database");
 
 const Auth = require("./routes/Auth");
@@ -51,6 +52,12 @@ const main = async () => {
   app.options("*", cors());
   app.use(express.json());
   app.use(cookieParser());
+
+  app.post(
+    "/stripe-checkout",
+    bodyParser.raw({ type: "application/json" }),
+    handleWebhook
+  );
 
   connectDb();
 
