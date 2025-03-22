@@ -24,7 +24,7 @@ exports.handleWebhook = async (req, res) => {
   // Listen for the custom event type "stripe_checkout"
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
-
+    console.log(session);
     // Assume session.line_items is an array of purchased items
     // where each item has a productId and quantity field.
     const lineItems = session.line_items;

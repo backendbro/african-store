@@ -2,6 +2,7 @@ const { User } = require("../model/User");
 const { Readable } = require("stream");
 const cloudinary = require("cloudinary").v2;
 const bcrypt = require("bcryptjs");
+const { sendEmail } = require("../utils/email");
 
 cloudinary.config({
   cloud_name: "dyw5q4fzd",
@@ -11,8 +12,9 @@ cloudinary.config({
 
 exports.Register = async (req, res) => {
   const user = await User.create(req.body);
+
   console.log(user);
-  responseToken(user, 201, res);
+  responseToken(user, 201, res, "register");
 };
 
 exports.Login = async (req, res, next) => {
@@ -40,7 +42,7 @@ exports.Login = async (req, res, next) => {
     return next(`Wrong password. Check and try again`);
   }
 
-  responseToken(user, 200, res);
+  responseToken(user, 200, res, "login");
 };
 
 exports.loggedInUser = async (req, res, next) => {
@@ -156,7 +158,7 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-const responseToken = (user, statusCode, res) => {
+const responseToken = async (user, statusCode, res, type) => {
   //create token
   const token = user.getSignedInJwtToken();
 
@@ -168,6 +170,17 @@ const responseToken = (user, statusCode, res) => {
   };
 
   //send the response
+
+  if (type == "register") {
+    try {
+      console.log(user.email);
+      const email = await sendEmail(user.email, "Welcome to African Market");
+      console.log(email);
+    } catch (error) {
+      return res.json({ message: "Something went wrong" });
+    }
+  }
+
   res
     .status(statusCode)
     .cookie("token", token, options)
