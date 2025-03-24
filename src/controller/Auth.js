@@ -174,7 +174,7 @@ const responseToken = async (user, statusCode, res, type) => {
   if (type == "register") {
     try {
       console.log(user.email);
-      const email = await sendEmail(user.email, "Welcome to African Market");
+      const email = await sendEmail(user.email, "Welcome");
       console.log(email);
     } catch (error) {
       return res.json({ message: "Something went wrong" });

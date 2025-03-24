@@ -43,7 +43,6 @@ const resend = new Resend(RESEND_API_KEY);
 const sendEmail = async (userEmail, subject) => {
   const emailHtml = welcomeEmailTemplate({});
   try {
-    console.log("Started");
     const emails = await resend.emails.send({
       from: "African Market <onboarding@africanmarkets.eu>",
       to: userEmail,
@@ -54,7 +53,6 @@ const sendEmail = async (userEmail, subject) => {
   } catch (error) {
     console.error(error);
   }
-  console.log("Done");
 };
 
 module.exports = { sendEmail };
