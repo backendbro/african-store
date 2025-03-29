@@ -5,24 +5,55 @@ const path = require("path");
 
 // Set up authentication with your service account including Drive scope
 const auth = new google.auth.GoogleAuth({
-  keyFile: path.join(__dirname, "google.json"), // Absolute path relative to the current file
+  keyFile: path.join(__dirname, "key.json"), // Absolute path relative to the current file
   scopes: [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive", // Needed for sharing
   ],
 });
 
-// Helper function to share the spreadsheet with a specified email address
-async function shareSpreadsheet(spreadsheetId, email) {
+// Helper function with retry logic for sharing the spreadsheet
+async function shareSpreadsheet(spreadsheetId, email, retries = 3) {
   const drive = google.drive({ version: "v3", auth });
-  await drive.permissions.create({
-    fileId: spreadsheetId,
-    requestBody: {
-      role: "writer", // Use "reader" if you want view-only access
-      type: "user",
-      emailAddress: email,
-    },
-  });
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      await drive.permissions.create({
+        fileId: spreadsheetId,
+        requestBody: {
+          role: "writer", // Use "reader" if you want view-only access
+          type: "user",
+          emailAddress: email,
+        },
+      });
+      console.log("Spreadsheet shared successfully.");
+      return; // Exit function on success
+    } catch (error) {
+      // Check if error is a rate limit error for sharing
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.error &&
+        error.response.data.error.errors &&
+        error.response.data.error.errors.some(
+          (err) => err.reason === "sharingRateLimitExceeded"
+        )
+      ) {
+        console.warn(
+          `Sharing rate limit exceeded. Attempt ${attempt} of ${retries}. Retrying...`
+        );
+        // Exponential backoff delay: 2^attempt * 1000 ms
+        await new Promise((resolve) =>
+          setTimeout(resolve, Math.pow(2, attempt) * 1000)
+        );
+        continue; // Retry the operation
+      }
+      // If not a rate limit error, rethrow the error
+      throw error;
+    }
+  }
+  throw new Error(
+    "Exceeded maximum retry attempts for sharing the spreadsheet."
+  );
 }
 
 exports.createOrderSummary = async (req, res) => {
