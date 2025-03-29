@@ -5,6 +5,6 @@ const { protect, authorize } = require("../middleware/Auth");
 
 // When the frontend calls this route (e.g., via a POST request),
 // it triggers the creation of a new order summary spreadsheet.
-router.post("/", protect, authorize("admin", "owner"), createOrderSummary);
+router.post("/", createOrderSummary);
 
 module.exports = router;
