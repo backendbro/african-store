@@ -74,7 +74,7 @@ const main = async () => {
   app.use("/api/v1/search", Search);
   app.use("/api/v1/order", Order);
   app.use("/api/v1/admin", Admin);
-  app.use(" ", OrderSummary);
+  app.use("api/v1/order-summary", OrderSummary);
 
   const port = 8000;
   const server = app.listen(port, () => {
