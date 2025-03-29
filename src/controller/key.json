@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "contractify-449720",
+  "private_key_id": "6d9e6c4be9d5839269449ff9f9df40a870173156",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCsjT3GkgEZNWtj\nsytUeQoZ8y8DsMhsIJy2QulWRM5bcgQxjCc896m7z5WgcgMBphDgoCFcFs+uEh5V\ny6yl3iywIPYwODA74KFCfRkjNXZSnFJ0Z2KHpEmZQY/QT3mBTjJ5/UGUeym4kWCq\n1lBkAFCH7561zfXocS6tQbK1An75l1UTnoakYJ9yNZd7d2HFZ6oGaseGZOy5YNAl\ng5dyKUSWz2aK2x4yItTAGIdI5G4BqG42Tia5s5tKGUwm/QeQ9VJfg7Foeu+bAaPP\n0pcHM7RuUPF65WVGCbBuIPpoAp3WL7DobGQOIR8TR1sc1iC6sUDpPtpPQ4i4gBCG\n1+v0cZj5AgMBAAECggEAAUpwMR1T/UaJRl5nf1MFeJK5Yg9vPGHVEkb3XGIY4hW9\nAsrf20SmBCXmImRf8eH2Y9vGzBvOk2iGyhEDOl1qW6nvdYZiE/yW8Dqj1r/WYgFR\n25WPZuDbfRZAt2f0ynsVhRSYKj5unjcWMEj4onrfH1kzSHxhL8sy9HBWoCSD4yWT\nvpAxeOu2oAgLHRO7Y/e19qDYb9ejx+gkVKRzqc5HqweEaTfkPS4nNfwSLuAEkGuj\nA/iAAipJpDGi7+4DlfWQjyYnV6zcKLPJGQHZz9we50xZEe8pLB8TGMxYOCD9l8B9\n63Rpc5B0OUph1IWhRtULJ/kjMemuu8fwh8waIoMDYQKBgQDsWQEv4EEE5rN6hrFT\nbT42gjnE90XVPAl6KG1kQWrnlgu0BeBtbb2ALo3I+wnjRkUPK0YeDIIm3WQPgnnD\nk/+kfm/7IKFrmSjZ3f4HDpAjhJHO5bAJxGZmL4d7QpmFOtA7FjoLGvUxXCZqBN5b\nfzVrwx1Q4hrKqxZtSBMarLlXyQKBgQC65j/Zg2gIVihaP+sEcwBdicYwiypBG/6S\nSGUFPAAKmQOyIqakMoCKaXKiqBYaO97mn7b51q6/wlTTY2Vczka9Cpwi++Wcx0LE\nDDo4qCCfL1OiXsfnkKb2PVMfmb9mzsN/xTrhxi7H3CX4Ut1f8t0YXwav6T3QenVa\nzJpLir4vsQKBgGR9f3S0u9ByqtMo29Kl+zK/8gIeRPHiIgFvmPtsmSC4emdjrEW6\nyDztDlnq6wxYP1qwwpJaLSiLL1Us28rdbW+qVsCG4jtWlrjzm2OyvHRtlHVM0amF\neShvgwJUkePE2u6Uh79bCe+fx7GCOmzazILyJc/TIyMS1WlHoN/RmsiJAoGANdkU\n2FR16sD4C1iTG8sOdeS2B1JxMCUiqX7WLDXnRSZk3DQDkxdB1Z8f+iE3jQNm60dk\n7oKeAn249taSY7TCyMB/z8yHkS4P3HAxbhVyoKqADC4Gpn8Uu6lbg6VGchZsWSm4\nF0iEPez9u5gUVAqjDNyEDrbCqog9u5VrdwxYU2ECgYEAvECiw0QinVhRsfeQNkZg\nCREacQUjIwx8lC7Z0Hu+cfuTxRTFZqRkagvpcMoil8sdFaFPk8YTfMMULFjmGivk\n7DV5mJelUkrSi4DpgIaLnDEIZn9O55f3DGf3BPRCWRWoqUYxZrlhGxtBJQdz1nUm\nqOX9wV5HTBfncJuTDNL8TaY=\n-----END PRIVATE KEY-----\n",
+  "client_email": "african@contractify-449720.iam.gserviceaccount.com",
+  "client_id": "109406457768118510337",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/african%40contractify-449720.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
