@@ -25,6 +25,7 @@ const main = async () => {
   const allowedOrigins = [
     "http://127.0.0.1:5500",
     "http://127.0.0.1:5501",
+    "http://127.0.0.1:5502",
     "http://localhost:8080",
     "https://african-store-client.vercel.app",
     "https://www.africanmarkets.eu",
@@ -73,7 +74,7 @@ const main = async () => {
   app.use("/api/v1/search", Search);
   app.use("/api/v1/order", Order);
   app.use("/api/v1/admin", Admin);
-  app.use("/api/v1/order-summary", OrderSummary);
+  app.use(" ", OrderSummary);
 
   const port = 8000;
   const server = app.listen(port, () => {
