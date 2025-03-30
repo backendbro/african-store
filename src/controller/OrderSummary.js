@@ -5,7 +5,7 @@ const path = require("path");
 
 // Set up authentication with your service account including Drive scope
 const auth = new google.auth.GoogleAuth({
-   credentials: {
+  credentials: {
     type: process.env.SPREADSHEET_API_TYPE,
     project_id: process.env.SPREADSHEET_API_PROJECT_ID,
     private_key_id: process.env.SPREADSHEET_API_PRIVATE_KEY_ID,
@@ -18,8 +18,7 @@ const auth = new google.auth.GoogleAuth({
       process.env.SPREADSHEET_API_AUTH_PROVIDER_x509_CERT_URL,
     client_x509_cert_url: process.env.SPREADSHEET_API_client_x509_cert_url,
     universe_domain: process.env.SPREADSHEET_API_UNIVERSE_DOMAIN,
-  },
-  //keyFile: path.join(__dirname, "key.json"), // Absolute path relative to the current file
+  }, // Absolute path relative to the current file
   scopes: [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive", // Needed for sharing
