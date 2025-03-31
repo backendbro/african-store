@@ -1,5 +1,8 @@
 // const nodemailer = require("nodemailer");
-const { welcomeEmailTemplate } = require("../email-views/index");
+const {
+  welcomeEmailTemplate,
+  workerEmailTemplate,
+} = require("../email-views/index");
 const { Resend } = require("resend");
 
 // let transporter = nodemailer.createTransport({
@@ -40,8 +43,14 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
 const resend = new Resend(RESEND_API_KEY);
 
-const sendEmail = async (userEmail, subject) => {
-  const emailHtml = welcomeEmailTemplate({});
+const sendEmail = async (userEmail, subject, adminName, message) => {
+  let emailHtml;
+  if (subject == "Welcome") {
+    emailHtml = welcomeEmailTemplate({});
+  } else if (subject == "Admin message") {
+    emailHtml = workerEmailTemplate({ adminName, message });
+  }
+
   try {
     const emails = await resend.emails.send({
       from: "African Market <onboarding@africanmarkets.eu>",
