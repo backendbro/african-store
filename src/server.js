@@ -20,6 +20,7 @@ const Search = require("./routes/Search");
 const Order = require("./routes/Order");
 const Admin = require("./routes/Admin");
 const OrderSummary = require("./routes/OrderSummary");
+const AdminReview = require("./routes/AdminReview");
 
 const main = async () => {
   const allowedOrigins = [
@@ -75,6 +76,7 @@ const main = async () => {
   app.use("/api/v1/order", Order);
   app.use("/api/v1/admin", Admin);
   app.use("/api/v1/order-summary", OrderSummary);
+  app.use("/api/v1/admin-review", AdminReview);
 
   const port = 8000;
   const server = app.listen(port, () => {
