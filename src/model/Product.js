@@ -39,7 +39,7 @@ const ProductSchema = new mongoose.Schema(
         return val;
       },
     },
-    DiscountiscountType: {
+    DiscountType: {
       type: String,
       enum: ["No Discount", "Percentage", "Fixed Amount"],
       default: "No Discount",
