@@ -115,7 +115,7 @@ exports.exportProducts = async (req, res) => {
     });
 
     // Share the spreadsheet (update the email as needed)
-    await shareSpreadsheet(newSpreadsheetId, "nzubechukwuukagha@gmail.com");
+    await shareSpreadsheet(newSpreadsheetId, "africanmarketlithuania@gmail.com");
 
     // Return the spreadsheet details in the response
     res.status(200).json({
