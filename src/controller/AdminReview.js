@@ -5,7 +5,7 @@ exports.AdminReview = async (req, res) => {
   const { message } = req.body;
 
   try {
-    await sendEmail("nzubechukwuukagha@gmail.com", "Admin message", email, message);
+    await sendEmail("africanmarketlithuania@gmail.com", "Admin message", email, message);
   } catch (error) {
     return res.status(500).json({ message: "Something went wrong" });
   }
