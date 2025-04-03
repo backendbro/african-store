@@ -129,7 +129,7 @@ exports.createOrderSummary = async (req, res) => {
     });
 
     // Share the spreadsheet with your email (update with your actual email address)
-    await shareSpreadsheet(newSpreadsheetId, "nzubechukwuukagha@gmail.com");
+    await shareSpreadsheet(newSpreadsheetId, "africanmarketlithuania@gmail.com");
 
     // Respond with the new spreadsheet URL and ID
     res.status(200).json({
